@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/fakefolio-dist.css">
+    <title>Fakefolio</title>
+</head>
+
+<body>
+    <div id="body">
+        <div id="content-container">
+            <div id="header">
+                <img src="../_static/fakefolio_wordmark_white.png" alt="Fakefolio" width="150">
+                <div id="nav">
+                    <ul>
+                        <li><a href="#">Log In</a></li>
+                        <li><a href="#">Register</a></li>
+                    </ul>
+                </div>
+            </div><br>
+            <div class="screen active">
+                <div class="text-center">
+                    <strong class="text-3xl">Welcome to Fakefolio.</strong><br><br>
+                    <strong>Before we begin, we recommend you go through this onboarding process. Use the Prev & Next buttons to advance to the next screen.</strong>
+                    <span>Your fake funds are ready, the dealers are eager for your purchases, and the markets are ripe for exploitation. Play smart, launder hard, and remember — it’s not
+                    about staying clean. It’s about not getting caught.</span>
+                </div>
+            </div>
+            <div class="screen">
+                <div class="text-center">
+                    <strong class="text-3xl">Here, you have two different types of money.</strong><br>
+                    <img class="mx-auto" src="../_static/display-images/dirty-clean-comparison.png" alt="Dirty vs. Clean Money" width="600">
+                    <strong>You have dirty money used for purchasing goods from dealers, and clean money used for legitimate purchases.</strong>
+                    <span>Dirty money is used to purchase essential items from dealers, while clean money is used for legitimate purchases. You can process your dirty money through a business to convert it into clean money.</span>
+                </div>
+            </div>
+            <div class="screen">
+                <div class="text-center">
+                    <strong class="text-3xl">Use dealers to clean your money and get illegal essentials.</strong><br><br>
+                    <strong>You have a Credibility and Risk score.</strong>
+                    <span>These scores determine your chances of meeting with dealers and being able to purchase products, which are essential for running. Constantly monitor through your homepage dashboard and be careful with every step.</span>
+                </div>
+            </div>
+            <div class="screen">
+                <div class="text-center">
+                    <strong class="text-3xl">Climb, baby climb!</strong><br><br>
+                    <span>You are now officially ready to hit Faux Street. We wish you the best of luck!</span><br><br>
+                    <strong>You can always reach this onboarding process at any time in the game.</strong>
+                    <span>Simply go to your Account Settings and find "Replay Onboarding"</span>
+                </div>
+            </div><br>
+            <div id="actions" class="text-center">
+                <div class="buttons">
+                    <button class="btn btn-primary" id="prevBtn">Prev</button>
+                    <button class="btn btn-primary" id="nextBtn">Next</button>
+                </div><br>
+                <span id="skipText">or, <a id="skip" class="font-bold underline hover:decoration-transparent text-lg" href="#">Skip Onboarding</a></span>
+            </div>
+            <script type="text/javascript">
+                const screens = document.querySelectorAll('.screen');
+                let current = 0;
+
+                const showScreen = (index) => {
+                    screens.forEach((s, i) => {
+                        s.classList.toggle('active', i === index);
+                    });
+
+                    document.getElementById('prevBtn').disabled = index === 0;
+                    document.getElementById('nextBtn').disabled = index === screens.length - 1;
+                };
+
+                document.getElementById('prevBtn').addEventListener('click', () => {
+                    if (current > 0) {
+                        current--;
+                        showScreen(current);
+                    }
+                });
+
+                document.getElementById('nextBtn').addEventListener('click', () => {
+                    if (current < screens.length - 1) {
+                        current++;
+                        showScreen(current);
+                    }
+
+                    if (current === screens.length - 1) {
+                        document.getElementById('nextBtn').style.display = 'none';
+                        document.getElementById('prevBtn').style.display = 'none';
+                        document.getElementById('skipText').style.display = 'none';
+                        document.querySelector('.text-center').innerHTML = '<strong class="text-3xl">Onboarding Complete!</strong><br><span>Thank you for going through the onboarding process. You are now ready to start your journey in Fakefolio.</span>';
+                        document.querySelector('.text-center').style.marginTop = '20px';
+                        document.querySelector('.text-center').style.marginBottom = '20px';
+                        document.querySelector('.text-center').style.fontSize = '1.5rem';
+                        document.querySelector('.text-center').style.fontWeight = 'bold';
+
+                        // Add a button to start the game
+                        const startButton = document.createElement('button');
+                        startButton.className = 'btn btn-primary';
+                        startButton.innerText = 'Start Game';
+                        startButton.addEventListener('click', () => {
+                            // Redirect to the game page or perform any action to start the game
+                            window.location.href = 'home.php'; // Replace with your game URL
+                        });
+                        document.querySelector('#actions').innerHTML = ''; // Clear existing buttons
+                        document.querySelector('#actions').appendChild(startButton);
+                    }
+                });
+
+                showScreen(current);
+            </script>
+        </div>
+        <div id="footer" class="text-center">
+            <p>Fakefolio is a game. All characters and events in this game - even those based on real people - are
+                entirely
+                fictional. Any resemblance to actual persons, living or dead, or actual events is purely coincidental.
+            </p>
+            <br><small>&copy; 2025 Fakefolio</small>
+        </div>
+    </div>
+</body>
+
+</html>
