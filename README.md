@@ -1,4 +1,4 @@
-# fakefolio
+![Fakefolio](https://github.com/user-attachments/assets/5aaacf9e-4da1-42f6-9dd9-aa2ddc26e3c6)
 
 Fakefolio is a browser-based PHP game that simulates a shady underground stock market. Players navigate the risky world of investments, laundering dirty money, and making morally questionable business decisions to build their corrupt empire. It's a game of strategy, deception, and high-stakes profits.
 
