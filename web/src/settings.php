@@ -27,12 +27,17 @@ if (!isset($_SESSION['user_id'])) {
             </div><br><br>
             <hr><br>
             <div class="content">
+                <div id="verifyEmail">
+                    <h2 class="font-bold text-2xl text-yellow-600">Verify your E-mail!</h2>
+                    <span>You have not verified your E-mail address yet. Please check your inbox for a verification link. Without verifying your E-mail address, you could lose access to your account. Before resending, check your junk/spam folders for an E-mail originating from <strong>@fakefolio.com</strong>.</span><br><br>
+                    <button id="resendVerify" class="btn-sm btn-primary">Resend verification E-mail</button>
+                </div><br>
                 <h2 class="font-bold text-2xl text-gray-400">Profile</h2><br>
                 <div class="profile-card">
                     <img id="pfp" src="../_static/pfp/default.png" alt="Default" width="100" class="inline-block">
                     <div class="profile-card-body ml-2 inline-block align-top">
                         <strong id="username" class="text-2xl">Username</strong><br>
-                        <span id="email"><?php echo htmlspecialchars(getUserInfo($_SESSION['user_id'])["email"] ?? 'Email not set'); ?></span><br>
+                        <span id="email"><?php echo htmlspecialchars(getUserInfo($_SESSION['user_id'])["email"] ?? 'Email not set'); ?> <span id="email_Verified_Indicator" class="text-sm font-bold text-red-800">Unverified</span></span><br>
                         <small class="text-gray-400 font-bold">Your E-mail is not shared publicly.</small><br>
                         <span id="membersince">Member since</span><br>
                         <button id="edit-profile" class="btn-sm btn-primary mt-2">Edit Profile</button>
