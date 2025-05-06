@@ -2,7 +2,7 @@
 
 Fakefolio is a browser-based PHP game that simulates a shady underground stock market. Players navigate the risky world of investments, laundering dirty money, and making morally questionable business decisions to build their corrupt empire. It's a game of strategy, deception, and high-stakes profits.
 
-## Table of Contents
+# Table of Contents
 
 - [Introduction](#introduction)
 - [Screenshots](#screenshots)
@@ -15,14 +15,14 @@ Fakefolio is a browser-based PHP game that simulates a shady underground stock m
 Fakefolio offers a satirical take on stock trading and corporate crime. Unlike traditional simulators, Fakefolio encourages players to explore the dark side of finance, using "clean" and "dirty" money to manipulate the market, bribe officials, and outwit rival players.
 
 ## Screenshots
-`upload later`
+uploading later
 
 ## Dependencies
 - PHP 7.4+
 - MySQL or MariaDB
 - Apache/Nginx web server
 
-## 🛠️ Troubleshooting
+## Troubleshooting
 
 | Issue                        | Solution                                                     |
 |-----------------------------|---------------------------------------------------------------|
@@ -32,12 +32,12 @@ Fakefolio offers a satirical take on stock trading and corporate crime. Unlike t
 
 ---
 
-## 👥 Contributors
+## Contributors
 
 - **You?** Want to contribute? Fork the repo and submit a pull request!
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the **MIT License**. See [LICENSE](LICENSE) for details.
