@@ -40,9 +40,18 @@ if (!isset($_SESSION['user_id'])) {
                         if ($verified == 0) {
                             echo '<div id="verifyEmail">';
                             echo '<strong class="text-3xl text-yellow-600">Verify your E-mail</strong><br>';
-                            echo '<span>We collect your E-mail address to relay important account updates and will never send marketing E-mails to your inbox, ever. Leaving your account unverified may lessen your chance of retreiving your account in the event you get locked out.</span><br><br>';
-                            // Two buttons: Enter verification code and Resend verification E-mail
-                            echo '<button id="verifyWithCode" class="btn-sm btn-primary">Enter verification code</button> ';
+                            echo '<span>We collect your E-mail address to relay important account updates and will never send marketing E-mails to your inbox, ever. Leaving your account unverified may lessen your chance of retreiving your account in the event you get locked out.</span><br>';
+                            if (getUserVerifiedEmails($_SESSION['user_id'])) {
+                                // Display the verified email addresses
+                                echo '<br><div id="existingEmails"><strong class="text-xl text-green-700">Verified E-mail(s)</strong><br>';
+                                echo '<span>You have already verified the following E-mail(s):</span><br>';
+                                $verifiedEmails = getUserVerifiedEmails($_SESSION['user_id']);
+                                foreach ($verifiedEmails as $email) {
+                                    echo '<span class="text-sm">' . htmlspecialchars($email['requesting_email']) . '</span><br>';
+                                }
+                                echo '</div>';
+                            }
+                            echo '<br><button id="verifyWithCode" class="btn-sm btn-primary">Enter verification code</button> ';
                             echo '<button id="resendEmail" class="btn-sm btn-primary">Resend verification E-mail</button><br>';
                             echo '<div id="verification-code" class="hidden mt-5">';
                             echo '<input type="text" id="code" placeholder="Enter verification code">';
@@ -129,6 +138,14 @@ if (!isset($_SESSION['user_id'])) {
                                 formMessages.classList.remove('hidden');
                                 formMessages.classList.add('text-green-600');
                                 formMessages.innerHTML = "Profile changes saved successfully!";
+                                // If verifyEmail is present, hide it
+                                const verifyEmail = document.getElementById('verifyEmail');
+                                if (verifyEmail) {
+                                    verifyEmail.classList.add('hidden');
+                                    document.getElementById("verification-ind").classList.remove("text-red-700");
+                                    document.getElementById("verification-ind").classList.add("text-green-700");
+                                    document.getElementById("verification-ind").textContent = "Verified";
+                                }
                                 // Wait for 3 seconds before hiding the message
                                 setTimeout(() => {
                                     formMessages.classList.add('hidden');
@@ -195,7 +212,7 @@ if (!isset($_SESSION['user_id'])) {
                                 return;
                             }
 
-                            fetch(`../api/get_profile_data.php?user_id=${userId}`)
+                            fetch(`../api/admin/query_user.php?user_id=${userId}`)
                                 .then(response => {
                                     if (!response.ok) {
                                         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -218,6 +235,10 @@ if (!isset($_SESSION['user_id'])) {
 
                                     // Update the username
                                     document.getElementById('username').textContent = data.username;
+
+                                    // Update the email
+                                    const emailElement = document.getElementById('email');
+                                    emailElement.textContent = data.email || 'Email not set';
                             
                                     // Update member since date
                                     const accountCreatedDate = new Date(data.account_created);

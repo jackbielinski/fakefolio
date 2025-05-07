@@ -110,8 +110,18 @@
         } else {
             // Generate verification code
             $verificationCode = bin2hex(random_bytes(8));
-            $stmt = $conn->prepare("INSERT INTO verification_codes (verification_code, requesting_email) VALUES (?, ?)");
-            return $stmt->execute([$verificationCode, $email]); // Returns true on success, false on failure
+            $stmt = $conn->prepare("INSERT INTO verification_codes (verification_code, requesting_email, associated_user) VALUES (?, ?, ?)");
+            return $stmt->execute([$verificationCode, $email, $userId]); // Returns true on success, false on failure
         }
+    }
+
+    // Get users verified email(s)
+    function getUserVerifiedEmails($userId) {
+        $conn = getDB();
+
+        $stmt = $conn->prepare("SELECT requesting_email FROM verification_codes WHERE associated_user = ? AND verified = 1");
+        $stmt->execute([$userId]);
+        $emails = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        return $emails ? array_map(fn($email) => ['requesting_email' => $email], $emails) : []; // Returns array of associative arrays
     }
 ?>
