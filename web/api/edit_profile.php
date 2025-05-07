@@ -72,6 +72,14 @@
                 $stmt = $conn->prepare("UPDATE users SET email = ? WHERE id = ?");
                 $stmt->execute([$email, $userId]);
                 $success = true;
+
+                // Check if the email is verified
+                $stmt = $conn->prepare("SELECT verified FROM verification_codes WHERE requesting_email = ?");
+                $stmt->execute([$email]);
+                $verification = $stmt->fetch(PDO::FETCH_ASSOC);
+                if (!$verification) {
+                    requestEmailVerification($userId, $email);
+                }
             }
         }
 

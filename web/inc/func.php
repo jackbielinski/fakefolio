@@ -96,4 +96,22 @@
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
         return $user && $user['admin_rights'] == 1; // Returns true if user is admin, false otherwise
     }
+
+    // Request email verification
+    function requestEmailVerification($userId, $email) {
+        $conn = getDB();
+
+        // Check if email is already verified
+        $stmt = $conn->prepare("SELECT verified FROM verification_codes WHERE requesting_email = ?");
+        $stmt->execute([$email]);
+        $verification = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($verification) {
+            return false; // Email already verified
+        } else {
+            // Generate verification code
+            $verificationCode = bin2hex(random_bytes(8));
+            $stmt = $conn->prepare("INSERT INTO verification_codes (verification_code, requesting_email) VALUES (?, ?)");
+            return $stmt->execute([$verificationCode, $email]); // Returns true on success, false on failure
+        }
+    }
 ?>
