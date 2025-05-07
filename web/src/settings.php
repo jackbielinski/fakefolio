@@ -27,18 +27,93 @@ if (!isset($_SESSION['user_id'])) {
             </div><br><br>
             <hr><br>
             <div class="content">
-                <div id="verifyEmail">
-                    <h2 class="font-bold text-2xl text-yellow-600">Verify your E-mail!</h2>
-                    <span>You have not verified your E-mail address yet. Please check your inbox for a verification link. Without verifying your E-mail address, you could lose access to your account. Before resending, check your junk/spam folders for an E-mail originating from <strong>@fakefolio.com</strong>.</span><br><br>
-                    <button id="resendVerify" class="btn-sm btn-primary">Resend verification E-mail</button>
-                </div><br>
+                <?php
+                    // Get verification code
+                    $db = getDB();
+                    $stmt = $db->prepare("SELECT verified FROM verification_codes WHERE requesting_email = :email");
+                    $stmt->bindValue(':email', getUserInfo($_SESSION['user_id'])["email"], PDO::PARAM_STR);
+                    $stmt->execute();
+                    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                    if ($result) {
+                        $verified = $result[0]['verified'];
+                        if ($verified == 0) {
+                            echo '<div id="verifyEmail">';
+                            echo '<strong class="text-3xl text-yellow-600">Verify your E-mail</strong><br>';
+                            echo '<span>We collect your E-mail address to relay important account updates and will never send marketing E-mails to your inbox, ever. Leaving your account unverified may lessen your chance of retreiving your account in the event you get locked out.</span><br><br>';
+                            // Two buttons: Enter verification code and Resend verification E-mail
+                            echo '<button id="verifyWithCode" class="btn-sm btn-primary">Enter verification code</button> ';
+                            echo '<button id="resendEmail" class="btn-sm btn-primary">Resend verification E-mail</button><br>';
+                            echo '<div id="verification-code" class="hidden mt-5">';
+                            echo '<input type="text" id="code" placeholder="Enter verification code">';
+                            echo '<button id="verifyBtn" class="btn-sm btn-primary">Verify</button>';
+                            echo '</div><br>';
+                            echo '</div>';
+                        }
+                    } else {
+                        echo '<div class="alert alert-danger">Error fetching verification status.</div>';
+                    }
+                ?>
+                <script>
+                    // if element is not found, do nothing, but if it is found, add event listeners
+                    const verifyWithCode = document.getElementById("verifyWithCode");
+                    const verificationPanel = document.getElementById("verification-code");
+
+                    verifyWithCode?.addEventListener("click", function() {
+                        verificationPanel.classList.toggle("hidden");
+
+                        // Get the verification code from the input field
+                        const verifyBtn = document.getElementById("verifyBtn");
+                        verifyBtn.addEventListener("click", function() {
+                            const code = document.getElementById("code").value;
+                            if (code) {
+                                const xhr = new XMLHttpRequest();
+                                xhr.open("POST", "../api/verify_email.php", true);
+                                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                                // Send user ID to the server
+                                const userId = "<?php echo $_SESSION['user_id']; ?>";
+                                xhr.onreadystatechange = function() {
+                                    if (xhr.readyState === 4) {
+                                        if (xhr.status === 200) {
+                                            const response = JSON.parse(xhr.responseText);
+
+                                            if (response.success) {
+                                                // Update the UI to reflect verification success
+                                                verificationPanel.classList.add("hidden");
+                                                document.getElementById("verifyEmail").classList.add("hidden");
+                                                document.getElementById("verification-ind").classList.remove("text-red-700");
+                                                document.getElementById("verification-ind").classList.add("text-green-700");
+                                                document.getElementById("verification-ind").textContent = "Verified";
+                                            } else {
+                                                alert(response.message);
+                                            }
+                                        } else {
+                                            alert("An error occurred. Please try again.");
+                                        }
+                                    }
+                                };
+                                xhr.send(`verificationCode=${code}&userId=${userId}`);
+                            } else {
+                                alert("Please enter a verification code.");
+                            }
+                        });
+                    });
+                </script>
                 <h2 class="font-bold text-2xl text-gray-400">Profile</h2><br>
                 <div class="profile-card">
                     <img id="pfp" src="../_static/pfp/default.png" alt="Default" width="100" class="inline-block">
                     <div class="profile-card-body ml-2 inline-block align-top">
                         <strong id="username" class="text-2xl">Username</strong><br>
-                        <span id="email"><?php echo htmlspecialchars(getUserInfo($_SESSION['user_id'])["email"] ?? 'Email not set'); ?> <span id="email_Verified_Indicator" class="text-sm font-bold text-red-800">Unverified</span></span><br>
-                        <small class="text-gray-400 font-bold">Your E-mail is not shared publicly.</small><br>
+                        <span id="email"><?php echo htmlspecialchars(getUserInfo($_SESSION['user_id'])["email"] ?? 'Email not set'); ?></span>
+                        <?php
+                            // Check if the email is verified
+                            if (isset($verified) && $verified == 0) {
+                                echo '<span id="verification-ind" class="text-red-700 text-sm font-bold">Not verified</span>';
+                            } else {
+                                echo '<span id="verification-ind" class="text-green-700 text-sm font-bold"> Verified</span>';
+                            }
+                        ?>
+                        <br><small class="text-gray-400 font-bold">Your E-mail is not shared publicly.</small><br>
                         <span id="membersince">Member since</span><br>
                         <button id="edit-profile" class="btn-sm btn-primary mt-2">Edit Profile</button>
                         <strong id="edit-profile-form-messages" class="hidden ml-2"></strong>

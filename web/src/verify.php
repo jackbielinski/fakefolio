@@ -46,6 +46,32 @@
                             verificationCode.classList.toggle("hidden");
                         });
 
+                        verifyBtn.addEventListener("click", function() {
+                            const code = document.getElementById("code").value;
+                            if (code) {
+                                const xhr = new XMLHttpRequest();
+                                xhr.open("POST", "../api/verify_email.php", true);
+                                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                                // Send user ID to the server
+                                const userId = "<?php echo $_SESSION['user_id']; ?>";
+                                xhr.onreadystatechange = function() {
+                                    if (xhr.readyState === 4 && xhr.status === 200) {
+                                        const response = JSON.parse(xhr.responseText);
+                                        if (response.success) {
+                                            document.getElementById("checkVerify").classList.add("hidden");
+                                            document.getElementById("verifySuccess").classList.remove("hidden");
+                                            skipBtn.classList.add("hidden");
+                                        } else {
+                                            alert(response.message);
+                                        }
+                                    }
+                                };
+                                xhr.send("verificationCode=" + encodeURIComponent(code) + "&userId=" + encodeURIComponent(userId));
+                            } else {
+                                alert("Please enter a verification code.");
+                            }
+                        });
+
                         // Check if verification code is provided in the URL
                         if (<?php echo json_encode($verificationCode); ?>) {
                             document.getElementById("checkVerify").classList.add("hidden");

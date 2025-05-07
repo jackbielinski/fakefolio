@@ -31,8 +31,14 @@
                         <strong id="credibility" class="text-sm text-green-700">credibility</strong><span id="credibility-value" class="ml-2"></span><br>
                         <strong id="risk" class="text-sm text-red-700">risk</strong><span id="risk-value" class="ml-2"></span><br>
                         <strong id="clean_money" class="text-sm text-gray-400">clean money</strong><span id="clean-value" class="ml-2"></span><br>
-                        <strong id="dirty_money" class="text-sm text-gray-400">dirty money</strong><span id="dirty-value" class="ml-2"></span><br>
-                        <button id="action-view-btn" class="btn-sm btn-primary">View actions</button><br><br>
+                        <strong id="dirty_money" class="text-sm text-gray-400">dirty money</strong><span id="dirty-value" class="ml-2"></span><br><br>
+                        <!-- 3 images next to each other with a 10px margin right -->
+                        <strong>Actions</strong>
+                        <div class="flex gap-5 mt-2">
+                            <img id="image1" src="../_static/icons/ban-grey.png" alt="Ban" width="50" class="inline-block">
+                            <img id="image2" src="../_static/icons/warning-grey.png" alt="Warnings" width="50" class="inline-block">
+                            <img id="image3" src="../_static/icons/pencil-grey.png" alt="Edit" width="50" class="inline-block">
+                        </div><br><br>
                     </div>
                 </div><br><br>
                 <p class="font-bold text-gray-400">Can't find what you're looking for? Try <a class="text-blue-500 underline hover:cursor-pointer hover:decoration-transparent hover:text-red-500" id="browse-db-button">browsing users</a> instead.</p>
