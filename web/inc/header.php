@@ -24,6 +24,7 @@
             echo '<span class="dropbtn">' . htmlspecialchars($username) . '</span>';
             echo '</span>';
             echo '<div class="dropdown-content">';
+            echo '<a href="messages.php">Messages</a>';
             echo '<a href="settings.php">Account Settings</a>';
             if (isAdmin($_SESSION['user_id'])) {
                 echo '<a href="admin.php">Admin Panel</a>';

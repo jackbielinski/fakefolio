@@ -98,7 +98,7 @@
                 document.getElementById("welcome-text").innerText = randomMessage;
             </script>
             <div id="content">
-                <form action="../api/register.php" method="post">
+                <form id="registration" method="post">
                     <strong>Username</strong>
                     <input type="text" name="username" id="username" placeholder="Enter your username" required><br>
                     <strong>Email</strong>
@@ -106,11 +106,34 @@
                     <strong>Password</strong>
                     <input type="password" name="password" id="password" placeholder="Enter your password"
                         required><br><br>
-                    <input type="submit" name="submit" value="Register" class="btn btn-primary"><br><br>
+                    <input type="submit" name="submit" value="Register" class="btn btn-primary"><strong id="form-messages" class="text-red-700 ml-2"></strong><br><br>
                     <span class="text-sm">or, if you don't have an account yet, </span><a
                         class="font-bold underline hover:decoration-transparent" href="login.php">Log In</a><br>
                 </form>
             </div>
+            <script>
+                document.getElementById("registration").addEventListener("submit", function (event) {
+                    event.preventDefault(); // Prevent the default form submission
+
+                    const formData = new FormData(this); // Create a FormData object from the form
+
+                    fetch("../api/register.php", {
+                        method: "POST",
+                        body: formData
+                    })
+                    .then(response => response.text()) // instead of .json()
+                    .then(text => {
+                        console.log("Raw response:", text); // See what's returned
+                        const data = JSON.parse(text); // Now safely parse
+                        if (data.error) {
+                            document.getElementById("form-messages").innerText = data.error;
+                            document.getElementById("form-messages").classList.remove("hidden");
+                        } else {
+                            window.location.href = "home.php";
+                        }
+                    })
+                });
+            </script>
         </div>
         <div id="footer" class="text-center">
             <p>Fakefolio is a game. All characters and events in this game - even those based on real people - are

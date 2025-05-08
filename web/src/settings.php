@@ -112,7 +112,7 @@ if (!isset($_SESSION['user_id'])) {
                 <div class="profile-card">
                     <img id="pfp" src="../_static/pfp/default.png" alt="Default" width="100" class="inline-block">
                     <div class="profile-card-body ml-2 inline-block align-top">
-                        <strong id="username" class="text-2xl">Username</strong><br>
+                        <strong id="username" class="text-2xl"><?php echo htmlspecialchars(getUserInfo($_SESSION["user_id"])["username"]); ?></strong><br>
                         <span id="email"><?php echo htmlspecialchars(getUserInfo($_SESSION['user_id'])["email"] ?? 'Email not set'); ?></span>
                         <?php
                             // Check if the email is verified
@@ -138,14 +138,6 @@ if (!isset($_SESSION['user_id'])) {
                                 formMessages.classList.remove('hidden');
                                 formMessages.classList.add('text-green-600');
                                 formMessages.innerHTML = "Profile changes saved successfully!";
-                                // If verifyEmail is present, hide it
-                                const verifyEmail = document.getElementById('verifyEmail');
-                                if (verifyEmail) {
-                                    verifyEmail.classList.add('hidden');
-                                    document.getElementById("verification-ind").classList.remove("text-red-700");
-                                    document.getElementById("verification-ind").classList.add("text-green-700");
-                                    document.getElementById("verification-ind").textContent = "Verified";
-                                }
                                 // Wait for 3 seconds before hiding the message
                                 setTimeout(() => {
                                     formMessages.classList.add('hidden');

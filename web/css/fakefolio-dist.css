@@ -603,6 +603,10 @@ video {
   margin-top: 1.75rem;
 }
 
+.mr-2 {
+  margin-right: 0.5rem;
+}
+
 .block {
   display: block;
 }
@@ -832,6 +836,10 @@ video {
   color: rgb(202 138 4 / var(--tw-text-opacity, 1));
 }
 
+.text-opacity-85 {
+  --tw-text-opacity: 0.85;
+}
+
 .underline {
   text-decoration-line: underline;
 }
@@ -992,6 +1000,13 @@ body {
 #dealer-card-body #dealer-stats div {
   display: inline-block;
   margin-right: 10px;
+}
+
+/* Message */
+
+.message {
+  border: 1px solid black;
+  padding: 10px;
 }
 
 /* Mission Card */

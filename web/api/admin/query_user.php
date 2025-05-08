@@ -24,7 +24,7 @@
         $userId = $_GET['user_id'];
     }
 
-    if (!isAdmin($_SESSION["user_id"]) || ($_SESSION["user_id"] !== $userId)) {
+    if (!isAdmin($_SESSION["user_id"]) && $_SESSION["user_id"] !== $userId) {
         echo json_encode(["error" => "You are not authorized to access this resource."]);
         http_response_code(403);
         exit;
