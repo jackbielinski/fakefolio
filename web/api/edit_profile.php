@@ -98,7 +98,10 @@
                 $stmt->execute([$email]);
                 $verification = $stmt->fetch(PDO::FETCH_ASSOC);
                 if (!$verification) {
+                    resetUserSocialSettings($userId);
                     requestEmailVerification($userId, $email);
+                } else {
+                    turnOnUserSocialSettings($userId);
                 }
             }
         }

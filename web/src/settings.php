@@ -254,8 +254,11 @@ if (!isset($_SESSION['user_id'])) {
                 <br>
                 <h2 class="font-bold text-2xl text-gray-400">Privacy & Security</h2>
                 <div class="mt-1">
+                    <strong class="text-xl text-gray-500">Manage Account Settings</strong>
+                
+                </div>
+                <div class="mt-1">
                     <strong class="text-xl text-gray-500">Social Settings</strong>
-                    <!-- make a table checklist with 2 columns and one row to start -->
                     <table id="expandedtable" class="table-auto w-full mt-2">
                         <tr id="allow_messagesRow">
                             <td>
@@ -282,7 +285,11 @@ if (!isset($_SESSION['user_id'])) {
                             </td>
                         </tr>
                     </table>
-                    <small><strong>Because your E-mail is unverified, you are limited from interacting with other Fakefolio users. To gain access, click the link in your inbox from @fakefolio.com or enter the verification code manually on-site.</strong></small>
+                    <?php
+                        if (isEmailVerified($_SESSION['user_id']) == false) {
+                            echo '<small><strong>Because your E-mail is unverified, you are limited from interacting with other Fakefolio users. To gain access, click the link in your inbox from @fakefolio.com or enter the verification code manually on-site.</strong></small>';
+                        }
+                    ?>
                 </div>
                 <script>
                     // When the tr is clicked, toggle the checkbox
@@ -294,6 +301,20 @@ if (!isset($_SESSION['user_id'])) {
                             }
                         });
                     });
+
+                    // Load the current settings from the server
+                    const userId = "<?php echo $_SESSION['user_id']; ?>";
+                    fetch(`../api/get_user_settings.php?user_id=${userId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data) {
+                                // Check the checkboxes if data = 1?
+                                document.getElementById('allow_messages').checked = data.allow_messages == 1;
+                                document.getElementById('allow_friend_requests').checked = data.allow_friend_requests == 1;
+                                document.getElementById('allow_profile_comments').checked = data.allow_profile_wall_comments == 1;
+                            }
+                        })
+                        .catch(error => console.error('Error fetching user settings:', error));
                 </script>
             </div>
             <div id="modal" class="modal">

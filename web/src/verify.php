@@ -30,13 +30,45 @@
                         <button id="verifyBtn" class="btn btn-primary">Verify</button>
                     </div>
                 </div>
+                <div id="determineVerify" class="hidden text-center mt-7">
+                    <strong class="text-4xl">Verifying your account...</strong><br><br>
+                    <span>This won't take long.</span>
+                    </div>
                 <div id="verifySuccess" class="hidden text-center mt-7">
                     <strong id="title" class="text-4xl">E-mail verified successfully!</strong><br><br>
                     <span id="description" class="text-xl">Thank you for verifying your E-mail address. You can now enjoy all the features of Fakefolio.</span>
-                    <br><br><a href="home.php" id="continueBtn" class="btn btn-primary">Continue</a><br><br>
+                    <br><br><a href="settings.php" id="continueBtn" class="btn btn-primary">Continue</a><br><br>
                 </div>
                 <script>
                     window.onload = function() {
+                        // Check if verification code is provided in the URL
+                        const verificationCode = <?php echo json_encode($verificationCode); ?>;
+                        if (verificationCode) {
+                            document.getElementById("checkVerify").classList.add("hidden");
+                            document.getElementById("determineVerify").classList.remove("hidden");
+                            skipBtn.classList.add("hidden");
+
+                            const xhr = new XMLHttpRequest();
+                            xhr.open("POST", "../api/verify_email.php", true);
+                            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                            // Send user ID to the server
+                            const userId = "<?php echo $_SESSION['user_id']; ?>";
+                            xhr.onreadystatechange = function () {
+                                if (xhr.readyState === 4 && xhr.status === 200) {
+                                    const response = JSON.parse(xhr.responseText);
+                                    if (response.success) {
+                                        document.getElementById("determineVerify").classList.add("hidden");
+                                        document.getElementById("verifySuccess").classList.remove("hidden");
+                                        skipBtn.classList.add("hidden");
+                                    } else {
+                                        alert(response.message);
+                                    }
+                                }
+                            };
+                            xhr.send("verificationCode=" + encodeURIComponent(verificationCode) + "&userId=" + encodeURIComponent(userId));
+                        }
+                    };
+
                         const skipBtn = document.getElementById("skipBtn");
                         const verificationCode = document.getElementById("verification-code");
                         const verifyBtn = document.getElementById("verifyBtn");
@@ -54,31 +86,23 @@
                                 xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
                                 // Send user ID to the server
                                 const userId = "<?php echo $_SESSION['user_id']; ?>";
-                                xhr.onreadystatechange = function() {
-                                    if (xhr.readyState === 4 && xhr.status === 200) {
-                                        const response = JSON.parse(xhr.responseText);
-                                        if (response.success) {
-                                            document.getElementById("checkVerify").classList.add("hidden");
-                                            document.getElementById("verifySuccess").classList.remove("hidden");
-                                            skipBtn.classList.add("hidden");
-                                        } else {
-                                            alert(response.message);
+                                    xhr.onreadystatechange = function () {
+                                        if (xhr.readyState === 4 && xhr.status === 200) {
+                                            const response = JSON.parse(xhr.responseText);
+                                            if (response.success) {
+                                                document.getElementById("checkVerify").classList.add("hidden");
+                                                document.getElementById("verifySuccess").classList.remove("hidden");
+                                                skipBtn.classList.add("hidden");
+                                            } else {
+                                                alert(response.message);
+                                            }
                                         }
-                                    }
-                                };
-                                xhr.send("verificationCode=" + encodeURIComponent(code) + "&userId=" + encodeURIComponent(userId));
-                            } else {
-                                alert("Please enter a verification code.");
-                            }
+                                    };
+                                    xhr.send("verificationCode=" + encodeURIComponent(code) + "&userId=" + encodeURIComponent(userId));
+                                } else {
+                                    alert("Please enter a verification code.");
+                                }
                         });
-
-                        // Check if verification code is provided in the URL
-                        if (<?php echo json_encode($verificationCode); ?>) {
-                            document.getElementById("checkVerify").classList.add("hidden");
-                            document.getElementById("verifySuccess").classList.remove("hidden");
-                            skipBtn.classList.add("hidden");
-                        }
-                    };
                 </script>
             </div>
         </div>

@@ -60,8 +60,14 @@ if (count($result) > 0) {
     if ($stmt->execute()) {
         // Get the last inserted user ID
         $userId = $conn->lastInsertId();
+        // Insert into social_settings
+        $stmt = $conn->prepare("INSERT INTO social_settings (associated_user) VALUES (:user_id)");
+        $stmt->bindParam(":user_id", $userId);
+        $stmt->execute();
         // Set session variables
         $_SESSION["user_id"] = $userId;
+        // Header for redirect
+        header("Location: ../home.php");
         // Request email verification
         requestEmailVerification($userId, $email);
         echo json_encode(["success" => "Registration successful."]);

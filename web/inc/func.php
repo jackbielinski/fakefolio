@@ -115,6 +115,31 @@
         }
     }
 
+    // Check if active email is verified
+    function isEmailVerified($userId) {
+        $conn = getDB();
+
+        // Get email from user id
+        $stmt = $conn->prepare("SELECT email FROM users WHERE id = ?");
+        $stmt->execute([$userId]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$user) {
+            return false; // User not found
+        } else {
+            $email = $user['email'];
+        }
+
+        $stmt = $conn->prepare("SELECT verified FROM verification_codes WHERE requesting_email = ?");
+        $stmt->execute([$email]);
+        $verification = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($verification) {
+            return $verification['verified'] == 1; // Returns true if email is verified, false otherwise
+        } else {
+            return false;
+        }
+    }
+
     // Get users verified email(s)
     function getUserVerifiedEmails($userId) {
         $conn = getDB();
@@ -206,5 +231,21 @@
         $stmt = $conn->prepare("SELECT * FROM social_settings WHERE associated_user = ?");
         $stmt->execute([$userId]);
         return $stmt->fetch(PDO::FETCH_ASSOC); // Returns associative array of social settings
+    }
+
+    // Reset user's social settings
+    function resetUserSocialSettings($userId) {
+        $conn = getDB();
+
+        $stmt = $conn->prepare("UPDATE social_settings SET allow_messages = 0, allow_friend_requests = 0, allow_profile_wall_comments = 0 WHERE associated_user = ?");
+        return $stmt->execute([$userId]); // Returns true on success, false on failure
+    }
+
+    // Turn on user's social settings
+    function turnOnUserSocialSettings($userId) {
+        $conn = getDB();
+
+        $stmt = $conn->prepare("UPDATE social_settings SET allow_messages = 1, allow_friend_requests = 1, allow_profile_wall_comments = 1 WHERE associated_user = ?");
+        return $stmt->execute([$userId]); // Returns true on success, false on failure
     }
 ?>

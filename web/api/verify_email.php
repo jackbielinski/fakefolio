@@ -27,6 +27,11 @@
                     $stmt->bindValue(':email', $email, PDO::PARAM_STR);
                     $stmt->execute();
 
+                    // Unrestrict the user from set social settings
+                    $stmt = $db->prepare("UPDATE social_settings SET allow_messages = 1, allow_friend_requests = 1, allow_profile_wall_comments = 1 WHERE associated_user = :userId");
+                    $stmt->bindValue(':userId', $userId, PDO::PARAM_INT);
+                    $stmt->execute();
+
                     echo json_encode(['success' => true, 'message' => 'E-mail verified successfully!']);
                     // 200 OK
                     http_response_code(200);
