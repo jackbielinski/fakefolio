@@ -1011,24 +1011,25 @@ body {
 
 /* Expanded table */
 
-#expandedtable {
+.expandedtable {
   padding: 20px 5px;
 }
 
-#expandedtable td {
+.expandedtable td {
   padding: 15px;
 }
 
-#expandedtable td#disabled {
+.expandedtable td#disabled {
   background-color: grey;
+  pointer-events: none;
 }
 
-#expandedtable tr {
+.expandedtable tr {
   padding: 10px;
   border-bottom: 1px solid #979797;
 }
 
-#expandedtable tr:last-child {
+.expandedtable tr:last-child {
   border-bottom: none;
 }
 

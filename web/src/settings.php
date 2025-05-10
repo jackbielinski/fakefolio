@@ -8,6 +8,7 @@ if (!isset($_SESSION['user_id'])) {
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,6 +18,7 @@ if (!isset($_SESSION['user_id'])) {
     <script src="../js/formHandler.js"></script>
     <title>Fakefolio</title>
 </head>
+
 <body>
     <div id="body">
         <div id="content-container">
@@ -28,52 +30,52 @@ if (!isset($_SESSION['user_id'])) {
             <hr><br>
             <div class="content">
                 <?php
-                    // Get verification code
-                    $db = getDB();
-                    $stmt = $db->prepare("SELECT verified FROM verification_codes WHERE requesting_email = :email");
-                    $stmt->bindValue(':email', getUserInfo($_SESSION['user_id'])["email"], PDO::PARAM_STR);
-                    $stmt->execute();
-                    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                // Get verification code
+                $db = getDB();
+                $stmt = $db->prepare("SELECT verified FROM verification_codes WHERE requesting_email = :email");
+                $stmt->bindValue(':email', getUserInfo($_SESSION['user_id'])["email"], PDO::PARAM_STR);
+                $stmt->execute();
+                $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                    if ($result) {
-                        $verified = $result[0]['verified'];
-                        if ($verified == 0) {
-                            echo '<div id="verifyEmail">';
-                            echo '<strong class="text-3xl text-yellow-600">Verify your E-mail</strong><br>';
-                            echo '<span>We collect your E-mail address to relay important account updates and will never send marketing E-mails to your inbox, ever. Leaving your account unverified may lessen your chance of retreiving your account in the event you get locked out.</span><br>';
-                            if (getUserVerifiedEmails($_SESSION['user_id'])) {
-                                // Display the verified email addresses
-                                echo '<br><div id="existingEmails"><strong class="text-xl text-green-700">Verified E-mail(s)</strong><br>';
-                                echo '<span>You have already verified the following E-mail(s):</span><br>';
-                                $verifiedEmails = getUserVerifiedEmails($_SESSION['user_id']);
-                                foreach ($verifiedEmails as $email) {
-                                    echo '<span class="text-sm">' . htmlspecialchars($email['requesting_email']) . '</span><br>';
-                                }
-                                echo '</div>';
+                if ($result) {
+                    $verified = $result[0]['verified'];
+                    if ($verified == 0) {
+                        echo '<div id="verifyEmail">';
+                        echo '<strong class="text-3xl text-yellow-600">Verify your E-mail</strong><br>';
+                        echo '<span>We collect your E-mail address to relay important account updates and will never send marketing E-mails to your inbox, ever. Leaving your account unverified may lessen your chance of retreiving your account in the event you get locked out.</span><br>';
+                        if (getUserVerifiedEmails($_SESSION['user_id'])) {
+                            // Display the verified email addresses
+                            echo '<br><div id="existingEmails"><strong class="text-xl text-green-700">Verified E-mail(s)</strong><br>';
+                            echo '<span>You have already verified the following E-mail(s):</span><br>';
+                            $verifiedEmails = getUserVerifiedEmails($_SESSION['user_id']);
+                            foreach ($verifiedEmails as $email) {
+                                echo '<span class="text-sm">' . htmlspecialchars($email['requesting_email']) . '</span><br>';
                             }
-                            echo '<br><button id="verifyWithCode" class="btn-sm btn-primary">Enter verification code</button> ';
-                            echo '<button id="resendEmail" class="btn-sm btn-primary">Resend verification E-mail</button><br>';
-                            echo '<div id="verification-code" class="hidden mt-5">';
-                            echo '<input type="text" id="code" placeholder="Enter verification code">';
-                            echo '<button id="verifyBtn" class="btn-sm btn-primary">Verify</button>';
-                            echo '</div><br>';
                             echo '</div>';
                         }
-                    } else {
-                        echo '<div class="alert alert-danger">Error fetching verification status.</div>';
+                        echo '<br><button id="verifyWithCode" class="btn-sm btn-primary">Enter verification code</button> ';
+                        echo '<button id="resendEmail" class="btn-sm btn-primary">Resend verification E-mail</button><br>';
+                        echo '<div id="verification-code" class="hidden mt-5">';
+                        echo '<input type="text" id="code" placeholder="Enter verification code">';
+                        echo '<button id="verifyBtn" class="btn-sm btn-primary">Verify</button>';
+                        echo '</div><br>';
+                        echo '</div>';
                     }
+                } else {
+                    echo '<div class="alert alert-danger">Error fetching verification status.</div>';
+                }
                 ?>
                 <script>
                     // if element is not found, do nothing, but if it is found, add event listeners
                     const verifyWithCode = document.getElementById("verifyWithCode");
                     const verificationPanel = document.getElementById("verification-code");
 
-                    verifyWithCode?.addEventListener("click", function() {
+                    verifyWithCode?.addEventListener("click", function () {
                         verificationPanel.classList.toggle("hidden");
 
                         // Get the verification code from the input field
                         const verifyBtn = document.getElementById("verifyBtn");
-                        verifyBtn.addEventListener("click", function() {
+                        verifyBtn.addEventListener("click", function () {
                             const code = document.getElementById("code").value;
                             if (code) {
                                 const xhr = new XMLHttpRequest();
@@ -81,7 +83,7 @@ if (!isset($_SESSION['user_id'])) {
                                 xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
                                 // Send user ID to the server
                                 const userId = "<?php echo $_SESSION['user_id']; ?>";
-                                xhr.onreadystatechange = function() {
+                                xhr.onreadystatechange = function () {
                                     if (xhr.readyState === 4) {
                                         if (xhr.status === 200) {
                                             const response = JSON.parse(xhr.responseText);
@@ -110,17 +112,20 @@ if (!isset($_SESSION['user_id'])) {
                 </script>
                 <h2 class="font-bold text-2xl text-gray-400">Profile</h2><br>
                 <div class="profile-card">
-                    <img id="pfp" src="../_static/pfp/default.png?v=<?= time() ?>" class="inline-block" alt="Profile Picture" width="100">
+                    <img id="pfp" src="../_static/pfp/default.png?v=<?= time() ?>" class="inline-block"
+                        alt="Profile Picture" width="100">
                     <div class="profile-card-body ml-2 inline-block align-top">
-                        <strong id="username" class="text-2xl"><?php echo htmlspecialchars(getUserInfo($_SESSION["user_id"])["username"]); ?></strong><br>
-                        <span id="email"><?php echo htmlspecialchars(getUserInfo($_SESSION['user_id'])["email"] ?? 'Email not set'); ?></span>
+                        <strong id="username"
+                            class="text-2xl"><?php echo htmlspecialchars(getUserInfo($_SESSION["user_id"])["username"]); ?></strong><br>
+                        <span
+                            id="email"><?php echo htmlspecialchars(getUserInfo($_SESSION['user_id'])["email"] ?? 'Email not set'); ?></span>
                         <?php
-                            // Check if the email is verified
-                            if (isset($verified) && $verified == 0) {
-                                echo '<span id="verification-ind" class="text-red-700 text-sm font-bold">Not verified</span>';
-                            } else {
-                                echo '<span id="verification-ind" class="text-green-700 text-sm font-bold"> Verified</span>';
-                            }
+                        // Check if the email is verified
+                        if (isset($verified) && $verified == 0) {
+                            echo '<span id="verification-ind" class="text-red-700 text-sm font-bold">Not verified</span>';
+                        } else {
+                            echo '<span id="verification-ind" class="text-green-700 text-sm font-bold"> Verified</span>';
+                        }
                         ?>
                         <br><small class="text-gray-400 font-bold">Your E-mail is not shared publicly.</small><br>
                         <span id="membersince">Member since</span><br>
@@ -164,35 +169,35 @@ if (!isset($_SESSION['user_id'])) {
                             }, 3000);
                         }
 
-                        document.getElementById('edit-profile').addEventListener('click', function() {
+                        document.getElementById('edit-profile').addEventListener('click', function () {
                             console.debug('Edit Profile button clicked');
-                            modalManager.load('../modals/edit_profile.php', function() {
+                            modalManager.load('../modals/edit_profile.php', function () {
                                 console.debug('Edit Profile modal loaded');
                                 const form = document.getElementById('edit-profile-form');
                                 const submit = document.getElementById('save-changes');
 
-                                submit.addEventListener('click', function(event) {
+                                submit.addEventListener('click', function (event) {
 
                                     const formData = new FormData(form);
                                     for (let [key, value] of formData.entries()) {
-                                    console.log(`${key}:`, value);
+                                        console.log(`${key}:`, value);
                                     }
                                     fetch('../api/edit_profile.php', {
                                         method: 'POST',
                                         body: formData
                                     })
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        if (data.error) {
-                                            handleError(data);
-                                        } else {
-                                            handleSuccess(data);
-                                        }
-                                    })
-                                    .catch(error => {
-                                        console.error('Error:', error);
-                                        handleError({ message: 'An error occurred while processing your request.' });
-                                    });
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            if (data.error) {
+                                                handleError(data);
+                                            } else {
+                                                handleSuccess(data);
+                                            }
+                                        })
+                                        .catch(error => {
+                                            console.error('Error:', error);
+                                            handleError({ message: 'An error occurred while processing your request.' });
+                                        });
                                 });
                             });
                         });
@@ -232,7 +237,7 @@ if (!isset($_SESSION['user_id'])) {
                                     // Update the email
                                     const emailElement = document.getElementById('email');
                                     emailElement.textContent = data.email || 'Email not set';
-                            
+
                                     // Update member since date
                                     const accountCreatedDate = new Date(data.account_created);
                                     const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -255,11 +260,28 @@ if (!isset($_SESSION['user_id'])) {
                 <h2 class="font-bold text-2xl text-gray-400">Privacy & Security</h2>
                 <div class="mt-1">
                     <strong class="text-xl text-gray-500">Manage Account Settings</strong>
-                
+                    <table id="account_settings" class="expandedtable table-auto w-full mt-2">
+                        <tr id="allow_profile_commentsRow">
+                            <td>
+                                <span>Change Password</span>
+                            </td>
+                            <td>
+                                <button id="change-password" class="btn-sm btn-primary">Change Password</button>
+                            </td>
+                        </tr>
+                        <tr id="allow_friend_requestsRow">
+                            <td>
+                                <span>Delete Account</span>
+                            </td>
+                            <td>
+                                <button id="delete-account" class="btn-sm btn-primary">Delete Account</button>
+                            </td>
+                        </tr>
+                    </table>
                 </div>
                 <div class="mt-1">
                     <strong class="text-xl text-gray-500">Social Settings</strong>
-                    <table id="expandedtable" class="table-auto w-full mt-2">
+                    <table id="social_settings" class="expandedtable table-auto w-full mt-2">
                         <tr id="allow_messagesRow">
                             <td>
                                 <input type="checkbox" name="allow_messages" id="allow_messages">
@@ -278,7 +300,7 @@ if (!isset($_SESSION['user_id'])) {
                         </tr>
                         <tr id="allow_profile_commentsRow">
                             <td>
-                                <input type="checkbox" name="allow_profile_comments" id="allow_profile_comments">
+                                <input type="checkbox" name="allow_profile_wall_comments" id="allow_profile_comments">
                             </td>
                             <td>
                                 <span>Allow other users to comment on your comment wall</span>
@@ -286,19 +308,57 @@ if (!isset($_SESSION['user_id'])) {
                         </tr>
                     </table>
                     <?php
-                        if (isEmailVerified($_SESSION['user_id']) == false) {
-                            echo '<small><strong>Because your E-mail is unverified, you are limited from interacting with other Fakefolio users. To gain access, click the link in your inbox from @fakefolio.com or enter the verification code manually on-site.</strong></small>';
-                        }
+                    if (isEmailVerified($_SESSION['user_id']) == false) {
+                        echo '<small><strong>Because your E-mail is unverified, you are limited from interacting with other Fakefolio users. To gain access, click the link in your inbox from @fakefolio.com or enter the verification code manually on-site.</strong></small>';
+                    }
                     ?>
                 </div>
                 <script>
-                    // When the tr is clicked, toggle the checkbox
-                    document.querySelectorAll('#expandedtable tr').forEach(row => {
-                        row.addEventListener('click', function() {
-                            const checkbox = this.querySelector('input[type="checkbox"]');
-                            if (checkbox) {
-                                checkbox.checked = !checkbox.checked;
-                            }
+                    // Attach event listeners after DOM is loaded to avoid duplicate handlers and double toggling
+                    document.addEventListener('DOMContentLoaded', function () {
+                        // When the tr is clicked, toggle the checkbox
+                        document.querySelectorAll('#social_settings tr').forEach(row => {
+                            row.addEventListener('click', function (event) {
+                                // Prevent toggling if the checkbox itself was clicked
+                                if (event.target && event.target.type === 'checkbox') {
+                                    return;
+                                }
+                                const checkbox = this.querySelector('input[type="checkbox"]');
+                                if (checkbox && !checkbox.disabled) {
+                                    checkbox.checked = !checkbox.checked;
+                                    // Trigger change event manually so the setting is saved
+                                    checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+                                }
+                            });
+                        });
+
+                        // Prevent row click from toggling checkbox if checkbox itself is clicked
+                        document.querySelectorAll('#social_settings input[type="checkbox"]').forEach(checkbox => {
+                            checkbox.addEventListener('click', function (event) {
+                                event.stopPropagation();
+                            });
+                            checkbox.addEventListener('change', function (event) {
+                                const settingName = this.name;
+                                const settingValue = this.checked ? 1 : 0;
+                                const userId = "<?php echo $_SESSION['user_id']; ?>";
+
+                                // Use fetch instead of XMLHttpRequest for reliability
+                                fetch(`../api/update_user_settings.php?user_id=${encodeURIComponent(userId)}&setting_name=${encodeURIComponent(settingName)}&setting_value=${encodeURIComponent(settingValue)}`, {
+                                    method: 'GET',
+                                    credentials: 'same-origin'
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.error) {
+                                        console.error('Error updating user settings:', data.error);
+                                    } else {
+                                        console.log('User settings updated successfully:', data);
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Fetch error:', error);
+                                });
+                            });
                         });
                     });
 
@@ -308,10 +368,22 @@ if (!isset($_SESSION['user_id'])) {
                         .then(response => response.json())
                         .then(data => {
                             if (data) {
-                                // Check the checkboxes if data = 1?
-                                document.getElementById('allow_messages').checked = data.allow_messages == 1;
-                                document.getElementById('allow_friend_requests').checked = data.allow_friend_requests == 1;
-                                document.getElementById('allow_profile_comments').checked = data.allow_profile_wall_comments == 1;
+                                // Check the checkboxes if settings are enabled
+                                if (data.settings_enabled == 1) {
+                                    // Get VALUES
+                                    const allowMessages = data.allow_messages == 1;
+                                    const allowFriendRequests = data.allow_friend_requests == 1;
+                                    const allowProfileComments = data.allow_profile_wall_comments == 1;
+                                    // Set the checkbox states
+                                    document.getElementById('allow_messages').checked = allowMessages;
+                                    document.getElementById('allow_friend_requests').checked = allowFriendRequests;
+                                    document.getElementById('allow_profile_comments').checked = allowProfileComments;
+                                } else {
+                                    // If settings are not enabled, disable the checkboxes
+                                    document.getElementById('allow_messages').disabled = true;
+                                    document.getElementById('allow_friend_requests').disabled = true;
+                                    document.getElementById('allow_profile_comments').disabled = true;
+                                }
                             }
                         })
                         .catch(error => console.error('Error fetching user settings:', error));
@@ -322,12 +394,12 @@ if (!isset($_SESSION['user_id'])) {
             </div>
             <script>
                 // Profile picture preview logic
-                document.addEventListener('change', function(event) {
+                document.addEventListener('change', function (event) {
                     if (event.target && event.target.id === 'profile_picture') {
                         const file = event.target.files[0];
                         if (file) {
                             const reader = new FileReader();
-                            reader.onload = function(e) {
+                            reader.onload = function (e) {
                                 const profilePicturePrev = document.getElementById('profile_picture_prev');
                                 if (profilePicturePrev) {
                                     profilePicturePrev.src = e.target.result;

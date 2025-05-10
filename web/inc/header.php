@@ -34,7 +34,7 @@
             echo '</div>';
             echo "</div>";
         } else {
-            echo "<a href=\"index.php\"><img src=\"../_static/fakefolio_wordmark_white.png\" alt=\"Fakefolio\" width=\"150\"></a>";
+            echo "<a href=\"index.php\"><img src=\"../_static/full_fakefolio_wordmark_white.png\" alt=\"Fakefolio\" width=\"150\"></a>";
             echo '<div id="nav"><ul><li><a href="login.php">Log In</a></li><li><a href="register.php">Register</a></li></ul></div>';
         }
     ?>

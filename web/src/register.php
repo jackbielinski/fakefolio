@@ -107,7 +107,7 @@
                     <input type="password" name="password" id="password" placeholder="Enter your password"
                         required><br><br>
                     <input type="submit" name="submit" value="Register" class="btn btn-primary"><strong id="form-messages" class="text-red-700 ml-2"></strong><br><br>
-                    <span class="text-sm">or, if you don't have an account yet, </span><a
+                    <span class="text-sm">or, if you already have an account, </span><a
                         class="font-bold underline hover:decoration-transparent" href="login.php">Log In</a><br>
                 </form>
             </div>

@@ -28,7 +28,7 @@
                     $stmt->execute();
 
                     // Unrestrict the user from set social settings
-                    $stmt = $db->prepare("UPDATE social_settings SET allow_messages = 1, allow_friend_requests = 1, allow_profile_wall_comments = 1 WHERE associated_user = :userId");
+                    $stmt = $db->prepare("UPDATE social_settings SET settings_enabled = 1 WHERE associated_user = :userId");
                     $stmt->bindValue(':userId', $userId, PDO::PARAM_INT);
                     $stmt->execute();
 
