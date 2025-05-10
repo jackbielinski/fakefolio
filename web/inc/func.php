@@ -124,4 +124,87 @@
         $emails = $stmt->fetchAll(PDO::FETCH_COLUMN);
         return $emails ? array_map(fn($email) => ['requesting_email' => $email], $emails) : []; // Returns array of associative arrays
     }
+
+    // Image resize
+    function resizeToSquare($filePath, $mimeType, $size)
+    {
+        switch ($mimeType) {
+            case 'image/jpeg':
+                $src = imagecreatefromjpeg($filePath);
+                break;
+            case 'image/png':
+                $src = imagecreatefrompng($filePath);
+                break;
+            default:
+                return false;
+        }
+
+        $width = imagesx($src);
+        $height = imagesy($src);
+        $min = min($width, $height);
+
+        // Crop to square
+        $srcCrop = imagecrop($src, [
+            'x' => ($width - $min) / 2,
+            'y' => ($height - $min) / 2,
+            'width' => $min,
+            'height' => $min
+        ]);
+
+        $dst = imagecreatetruecolor($size, $size);
+        imagecopyresampled($dst, $srcCrop, 0, 0, 0, 0, $size, $size, $min, $min);
+
+        switch ($mimeType) {
+            case 'image/jpeg':
+                imagejpeg($dst, $filePath, 90);
+                break;
+            case 'image/png':
+                imagepng($dst, $filePath);
+                break;
+        }
+
+        imagedestroy($src);
+        imagedestroy($srcCrop);
+        imagedestroy($dst);
+        return true;
+    }
+
+    // Update user profile
+    function updateUserProfile($userId, $username, $email, $profilePicture) {
+        $conn = getDB();
+
+        // Check if username is already taken
+        $stmt = $conn->prepare("SELECT id FROM users WHERE username = ? AND id != ?");
+        $stmt->execute([$username, $userId]);
+        if ($stmt->rowCount() > 0) {
+            return false; // Username already taken
+        }
+
+        // Update username and email in database
+        $stmt = $conn->prepare("UPDATE users SET username = ?, email = ? WHERE id = ?");
+        if ($stmt->execute([$username, $email, $userId])) {
+            if (!empty($profilePicture['name'])) {
+                // Handle profile picture upload
+                $targetDir = "../_static/profile_pictures/";
+                $targetFile = $targetDir . basename($profilePicture["name"]);
+                move_uploaded_file($profilePicture["tmp_name"], $targetFile);
+                resizeToSquare($targetFile, mime_content_type($targetFile), 200);
+                // Update profile picture path in database
+                $stmt = $conn->prepare("UPDATE users SET profile_picture_path = ? WHERE id = ?");
+                return $stmt->execute([$targetFile, $userId]); // Returns true on success, false on failure
+            }
+            return true; // Profile updated successfully
+        } else {
+            return false; // Failed to update profile
+        }
+    }
+
+    // Get user's social settings and return as array
+    function getUserSocialSettings($userId) {
+        $conn = getDB();
+
+        $stmt = $conn->prepare("SELECT * FROM social_settings WHERE associated_user = ?");
+        $stmt->execute([$userId]);
+        return $stmt->fetch(PDO::FETCH_ASSOC); // Returns associative array of social settings
+    }
 ?>

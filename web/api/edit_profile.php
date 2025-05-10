@@ -106,13 +106,12 @@
         $pfpChanged = false;
 
         if (!empty($profilePicture['name'])) {
-            $maxFileSize = 1024 * 1024; // 1MB
+            $maxFileSize = 1024 * 1024;
             $allowedTypes = ['image/jpeg', 'image/png'];
-
             if ($profilePicture['size'] > $maxFileSize) {
-                $errors[] = "Profile picture is too large. Maximum size is 1MB.";
+                $errors[] = "Profile picture is too large. Max 1MB.";
             } elseif (!in_array($profilePicture['type'], $allowedTypes)) {
-                $errors[] = "Invalid file type. Only JPEG and PNG files are allowed.";
+                $errors[] = "Invalid file type. Only JPEG and PNG allowed.";
             } else {
                 $folder = "pfp/";
                 $targetDir = "../_static/" . $folder;
@@ -120,20 +119,20 @@
                 $fileName = $userId . "." . $fileExtension;
                 $targetFilePath = $targetDir . $fileName;
 
+                // Delete previous files with same user ID
                 $existingFiles = glob($targetDir . $userId . ".*");
                 foreach ($existingFiles as $existingFile) {
-                    if ($existingFile !== $targetFilePath) {
-                        unlink($existingFile);
-                    }
+                    unlink($existingFile);
                 }
 
-                $dbFilePath = $folder . $fileName;
                 if (move_uploaded_file($profilePicture['tmp_name'], $targetFilePath)) {
+                    // Resize image to square
+                    resizeToSquare($targetFilePath, $profilePicture['type'], 256);
+
+                    $dbFilePath = $folder . $fileName;
                     $stmt = $conn->prepare("UPDATE users SET profile_picture_path = ? WHERE id = ?");
                     $stmt->execute([$dbFilePath, $userId]);
-                    if ($stmt->rowCount() > 0) {
-                        $pfpChanged = true;
-                    }
+                    $pfpChanged = true;
                 } else {
                     $errors[] = "Failed to upload profile picture.";
                 }

@@ -252,8 +252,49 @@ if (!isset($_SESSION['user_id'])) {
                     </script>
                 </div>
                 <br>
-                <h2 class="font-bold text-2xl text-gray-400">Onboarding</h2>
-                <a href="onboarding.html" class="text-blue-600 underline font-bold hover:text-red-500 hover:decoration-transparent">View onboarding</a>
+                <h2 class="font-bold text-2xl text-gray-400">Privacy & Security</h2>
+                <div class="mt-1">
+                    <strong class="text-xl text-gray-500">Social Settings</strong>
+                    <!-- make a table checklist with 2 columns and one row to start -->
+                    <table id="expandedtable" class="table-auto w-full mt-2">
+                        <tr id="allow_messagesRow">
+                            <td>
+                                <input type="checkbox" name="allow_messages" id="allow_messages">
+                            </td>
+                            <td>
+                                <span>Allow messages from other users</span>
+                            </td>
+                        </tr>
+                        <tr id="allow_friend_requestsRow">
+                            <td>
+                                <input type="checkbox" name="allow_friend_requests" id="allow_friend_requests">
+                            </td>
+                            <td>
+                                <span>Allow friend requests from other users</span>
+                            </td>
+                        </tr>
+                        <tr id="allow_profile_commentsRow">
+                            <td>
+                                <input type="checkbox" name="allow_profile_comments" id="allow_profile_comments">
+                            </td>
+                            <td>
+                                <span>Allow other users to comment on your comment wall</span>
+                            </td>
+                        </tr>
+                    </table>
+                    <small><strong>Because your E-mail is unverified, you are limited from interacting with other Fakefolio users. To gain access, click the link in your inbox from @fakefolio.com or enter the verification code manually on-site.</strong></small>
+                </div>
+                <script>
+                    // When the tr is clicked, toggle the checkbox
+                    document.querySelectorAll('#expandedtable tr').forEach(row => {
+                        row.addEventListener('click', function() {
+                            const checkbox = this.querySelector('input[type="checkbox"]');
+                            if (checkbox) {
+                                checkbox.checked = !checkbox.checked;
+                            }
+                        });
+                    });
+                </script>
             </div>
             <div id="modal" class="modal">
                 <div id="modal-content"></div>

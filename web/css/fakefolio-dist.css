@@ -591,6 +591,10 @@ video {
   margin-right: 1rem;
 }
 
+.mt-1 {
+  margin-top: 0.25rem;
+}
+
 .mt-2 {
   margin-top: 0.5rem;
 }
@@ -601,10 +605,6 @@ video {
 
 .mt-7 {
   margin-top: 1.75rem;
-}
-
-.mr-2 {
-  margin-right: 0.5rem;
 }
 
 .block {
@@ -781,14 +781,14 @@ video {
   text-transform: uppercase;
 }
 
-.text-blue-600 {
-  --tw-text-opacity: 1;
-  color: rgb(37 99 235 / var(--tw-text-opacity, 1));
-}
-
 .text-gray-400 {
   --tw-text-opacity: 1;
   color: rgb(156 163 175 / var(--tw-text-opacity, 1));
+}
+
+.text-gray-500 {
+  --tw-text-opacity: 1;
+  color: rgb(107 114 128 / var(--tw-text-opacity, 1));
 }
 
 .text-gray-600 {
@@ -1007,6 +1007,29 @@ body {
 .message {
   border: 1px solid black;
   padding: 10px;
+}
+
+/* Expanded table */
+
+#expandedtable {
+  padding: 20px 5px;
+}
+
+#expandedtable td {
+  padding: 15px;
+}
+
+#expandedtable td#disabled {
+  background-color: grey;
+}
+
+#expandedtable tr {
+  padding: 10px;
+  border-bottom: 1px solid #979797;
+}
+
+#expandedtable tr:last-child {
+  border-bottom: none;
 }
 
 /* Mission Card */
@@ -1358,11 +1381,6 @@ iframe#command-frame {
   max-width: 900px;
   margin: 0 auto;
   padding: 20px;
-}
-
-.hover\:text-red-500:hover {
-  --tw-text-opacity: 1;
-  color: rgb(239 68 68 / var(--tw-text-opacity, 1));
 }
 
 .hover\:text-red-800:hover {
