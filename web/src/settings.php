@@ -110,7 +110,7 @@ if (!isset($_SESSION['user_id'])) {
                 </script>
                 <h2 class="font-bold text-2xl text-gray-400">Profile</h2><br>
                 <div class="profile-card">
-                    <img id="pfp" src="../_static/pfp/default.png" alt="Default" width="100" class="inline-block">
+                    <img id="pfp" src="../_static/pfp/default.png?v=<?= time() ?>" class="inline-block" alt="Profile Picture" width="100">
                     <div class="profile-card-body ml-2 inline-block align-top">
                         <strong id="username" class="text-2xl"><?php echo htmlspecialchars(getUserInfo($_SESSION["user_id"])["username"]); ?></strong><br>
                         <span id="email"><?php echo htmlspecialchars(getUserInfo($_SESSION['user_id'])["email"] ?? 'Email not set'); ?></span>
@@ -174,7 +174,9 @@ if (!isset($_SESSION['user_id'])) {
                                 submit.addEventListener('click', function(event) {
 
                                     const formData = new FormData(form);
-
+                                    for (let [key, value] of formData.entries()) {
+                                    console.log(`${key}:`, value);
+                                    }
                                     fetch('../api/edit_profile.php', {
                                         method: 'POST',
                                         body: formData
@@ -185,7 +187,6 @@ if (!isset($_SESSION['user_id'])) {
                                             handleError(data);
                                         } else {
                                             handleSuccess(data);
-                                            updateUserInfo(); // Update user info after successful edit
                                         }
                                     })
                                     .catch(error => {
@@ -220,7 +221,7 @@ if (!isset($_SESSION['user_id'])) {
                                     // Update the profile picture
                                     const profilePicture = document.getElementById('pfp');
                                     if (data.profile_picture_path) {
-                                        profilePicture.src = '../_static/' + data.profile_picture_path;
+                                        profilePicture.src = '../_static/' + data.profile_picture_path + '?v=' + new Date().getTime(); // Cache-busting
                                     } else {
                                         profilePicture.src = '../_static/pfp/default.png'; // Default image if no profile picture is set
                                     }
