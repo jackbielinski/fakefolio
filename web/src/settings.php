@@ -95,6 +95,8 @@ if (!isset($_SESSION['user_id'])) {
                                                 document.getElementById("verification-ind").classList.remove("text-red-700");
                                                 document.getElementById("verification-ind").classList.add("text-green-700");
                                                 document.getElementById("verification-ind").textContent = "Verified";
+
+                                                alert(response.message);
                                             } else {
                                                 alert(response.message);
                                             }
@@ -171,7 +173,7 @@ if (!isset($_SESSION['user_id'])) {
 
                         document.getElementById('edit-profile').addEventListener('click', function () {
                             console.debug('Edit Profile button clicked');
-                            modalManager.load('../modals/edit_profile.php', function () {
+                            modalManager.load('../modals/user/edit_profile.php', function () {
                                 console.debug('Edit Profile modal loaded');
                                 const form = document.getElementById('edit-profile-form');
                                 const submit = document.getElementById('save-changes');
@@ -259,7 +261,8 @@ if (!isset($_SESSION['user_id'])) {
                 <br>
                 <h2 class="font-bold text-2xl text-gray-400">Privacy & Security</h2>
                 <div class="mt-1">
-                    <strong class="text-xl text-gray-500">Manage Account Settings</strong>
+                    <strong class="text-xl text-gray-500">Manage Account </strong>
+                    <span id="account_settings_msgs" class="font-bold hidden"></span>
                     <table id="account_settings" class="expandedtable table-auto w-full mt-2">
                         <tr id="allow_profile_commentsRow">
                             <td>
@@ -279,6 +282,108 @@ if (!isset($_SESSION['user_id'])) {
                         </tr>
                     </table>
                 </div>
+                <script>
+                    document.getElementById('change-password').addEventListener('click', function () {
+                        modalManager.load('../modals/user/change_password.php', function () {
+                            const changePasswordBtn = document.getElementById('change-password-submit');
+                            changePasswordBtn.addEventListener('click', function (event) {
+                                event.preventDefault();
+
+                                const currentPassword = document.getElementById('current-password').value;
+                                const newPassword = document.getElementById('new-password').value;
+                                const confirmNewPassword = document.getElementById('confirm-new-password').value;
+
+                                if (newPassword !== confirmNewPassword) {
+                                    alert("New passwords do not match.");
+                                    return;
+                                } else {
+                                    fetch('../api/change_password.php', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/x-www-form-urlencoded'
+                                        },
+                                        body: new URLSearchParams({
+                                            'current-password': currentPassword,
+                                            'new-password': newPassword,
+                                            'confirm-new-password': confirmNewPassword
+                                        })
+                                    })
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            if (data.error) {
+                                                document.getElementById('change-password-form-messages').classList.remove('hidden');
+                                                document.getElementById('change-password-form-messages').classList.add('text-red-500');
+                                                document.getElementById('change-password-form-messages').innerHTML = data.error;
+
+                                                // Wait for 3 seconds before hiding the message
+                                                setTimeout(() => {
+                                                    document.getElementById('change-password-form-messages').classList.add('hidden');
+                                                    document.getElementById('change-password-form-messages').classList.remove('text-red-500');
+                                                }, 3000);
+                                            } else {
+                                                document.getElementById('account_settings_msgs').classList.remove('hidden');
+                                                document.getElementById('account_settings_msgs').classList.add('text-green-600');                                            
+                                                document.getElementById('account_settings_msgs').innerHTML = "Password changed successfully!";
+                                                // Wait for 3 seconds before hiding the message
+                                                setTimeout(() => {
+                                                    document.getElementById('account_settings_msgs').classList.add('hidden');
+                                                    document.getElementById('account_settings_msgs').classList.remove('text-green-600');
+                                                }, 3000);
+                                                modalManager.close();
+                                            }
+                                        })
+                                        .catch(error => {
+                                            console.error('Error:', error);
+                                            alert("An error occurred while changing the password.");
+                                        });
+                                }
+                            });
+                        });
+                    });
+
+                    document.getElementById('delete-account').addEventListener('click', function () {
+                        modalManager.load('../modals/user/delete_account.php', function () {
+                            const deleteAccountBtn = document.getElementById('delete-account-submit');
+                            deleteAccountBtn.addEventListener('click', function (event) {
+                                event.preventDefault();
+
+                                if (confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
+                                    fetch('../api/delete_account.php', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/x-www-form-urlencoded'
+                                        },
+                                        body: new URLSearchParams({
+                                            'user_id': "<?php echo $_SESSION['user_id']; ?>",
+                                            'password': document.getElementById('current-password').value
+                                        })
+                                    })
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            if (data.error) {
+                                                document.getElementById('delete-form-msgs').classList.remove('hidden');
+                                                document.getElementById('delete-form-msgs').classList.add('text-red-500');
+                                                document.getElementById('delete-form-msgs').innerText = data.error;
+
+                                                // Wait for 3 seconds before hiding the message
+                                                setTimeout(() => {
+                                                    document.getElementById('delete-form-msgs').classList.add('hidden');
+                                                    document.getElementById('delete-form-msgs').classList.remove('text-red-500');
+                                                }, 3000);
+                                            } else {
+                                                alert("Account deleted successfully.");
+                                                window.location.href = "logout.php";
+                                            }
+                                        })
+                                        .catch(error => {
+                                            document.getElementById('delete-form-msgs').classList.remove('hidden');
+                                            document.getElementById('delete-form-msgs').innerText = "An error occurred while deleting the account.";
+                                        });
+                                }
+                            });
+                        });
+                    });
+                </script>
                 <div class="mt-1">
                     <strong class="text-xl text-gray-500">Social Settings</strong>
                     <table id="social_settings" class="expandedtable table-auto w-full mt-2">
@@ -309,7 +414,7 @@ if (!isset($_SESSION['user_id'])) {
                     </table>
                     <?php
                     if (isEmailVerified($_SESSION['user_id']) == false) {
-                        echo '<small><strong>Because your E-mail is unverified, you are limited from interacting with other Fakefolio users. To gain access, click the link in your inbox from @fakefolio.com or enter the verification code manually on-site.</strong></small>';
+                        echo '<small><strong class="text-yellow-600">Because your E-mail is unverified, you are limited from interacting with other Fakefolio users. To gain access, click the link in your inbox from @fakefolio.com or enter the verification code manually on-site.</strong></small>';
                     }
                     ?>
                 </div>
@@ -383,6 +488,18 @@ if (!isset($_SESSION['user_id'])) {
                                     document.getElementById('allow_messages').disabled = true;
                                     document.getElementById('allow_friend_requests').disabled = true;
                                     document.getElementById('allow_profile_comments').disabled = true;
+
+                                    // Set all to unchecked
+                                    document.getElementById('allow_messages').checked = false;
+                                    document.getElementById('allow_friend_requests').checked = false;
+                                    document.getElementById('allow_profile_comments').checked = false;
+                                }
+
+                                // If email gets verified, enable the settings
+                                if (data.verified == 1) {
+                                    document.getElementById('allow_messages').disabled = false;
+                                    document.getElementById('allow_friend_requests').disabled = false;
+                                    document.getElementById('allow_profile_comments').disabled = false;
                                 }
                             }
                         })

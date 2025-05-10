@@ -1026,7 +1026,7 @@ body {
 
 .expandedtable tr {
   padding: 10px;
-  border-bottom: 1px solid #979797;
+  border-bottom: 1px solid #d8d8d8;
 }
 
 .expandedtable tr:last-child {
@@ -1137,7 +1137,7 @@ body {
   background-color: #0160b0;
 }
 
-.btn:disabled {
+.btn.disabled, .btn:disabled, .btn-sm.disabled, .btn-sm:disabled {
   background-color: #ccc;
   color: #666;
   cursor: not-allowed;

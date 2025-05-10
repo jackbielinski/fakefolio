@@ -1,5 +1,5 @@
 <?php
-    include "../inc/main.php";
+    include "../../inc/main.php";
 
     $active_user = getUserInfo($_SESSION['user_id']);
 

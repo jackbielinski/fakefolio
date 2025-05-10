@@ -98,7 +98,9 @@
                 $stmt->execute([$email]);
                 $verification = $stmt->fetch(PDO::FETCH_ASSOC);
                 if (!$verification) {
-                    resetUserSocialSettings($userId);
+                    $stmt = $conn->prepare("UPDATE social_settings SET settings_enabled = 0 WHERE associated_user = ?");
+                    $stmt->execute([$userId]);
+
                     requestEmailVerification($userId, $email);
                 } else {
                     turnOnUserSocialSettings($userId);
