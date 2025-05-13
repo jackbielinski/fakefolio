@@ -66,15 +66,19 @@ if (count($result) > 0) {
         $stmt->execute();
         // Set session variables
         $_SESSION["user_id"] = $userId;
-        // Header for redirect
-        header("Location: ../home.php");
+
         // Request email verification
-        requestEmailVerification($userId, $email);
-        echo json_encode(["success" => "Registration successful."]);
-        http_response_code(200);
+        if (requestEmailVerification($userId, $email)) {
+            echo json_encode(["success" => "User registered successfully."]);
+            http_response_code(200);
+
+            // redirect to the verification page
+            header("Location: ../verify");
+        }
     } else {
         echo json_encode(["error" => "Error registering user."]);
         http_response_code(500);
+        exit;
     }
 
     $stmt = null;

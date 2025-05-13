@@ -89,14 +89,8 @@ if (!isset($_SESSION['user_id'])) {
                                             const response = JSON.parse(xhr.responseText);
 
                                             if (response.success) {
-                                                // Update the UI to reflect verification success
-                                                verificationPanel.classList.add("hidden");
-                                                document.getElementById("verifyEmail").classList.add("hidden");
-                                                document.getElementById("verification-ind").classList.remove("text-red-700");
-                                                document.getElementById("verification-ind").classList.add("text-green-700");
-                                                document.getElementById("verification-ind").textContent = "Verified";
-
                                                 alert(response.message);
+                                                window.location.reload();
                                             } else {
                                                 alert(response.message);
                                             }
@@ -105,11 +99,28 @@ if (!isset($_SESSION['user_id'])) {
                                         }
                                     }
                                 };
-                                xhr.send(`verificationCode=${code}&userId=${userId}`);
+                                xhr.send(`verificationCode=${code}&user_id=${userId}`);
                             } else {
                                 alert("Please enter a verification code.");
                             }
                         });
+                    });
+
+                    const resendEmail = document.getElementById("resendEmail");
+                    resendEmail?.addEventListener("click", function () {
+                        fetch(`../api/resend_verification_email.php?user_id=<?php echo $_SESSION['user_id']; ?>`)
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    alert(data.success);
+                                } else {
+                                    alert(data.error);
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                alert("An error occurred while resending the verification email.");
+                            });
                     });
                 </script>
                 <h2 class="font-bold text-2xl text-gray-400">Profile</h2><br>

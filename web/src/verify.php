@@ -2,6 +2,15 @@
     include "../inc/main.php";
 
     $verificationCode = $_GET['verificationCode'] ?? null;
+    $userId = $_GET['user_id'] ?? null;
+
+    // If the verification code is not provided, valid, user is not logged in, or the user is already verified, redirect to the home page
+    
+
+    if (!isset($_SESSION['user_id']) || isEmailVerified($_SESSION["user_id"]) == true || getUserVerifiedEmails($_SESSION["user_id"]) > 0) {
+        header("Location: home");
+        exit;
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -65,7 +74,7 @@
                                     }
                                 }
                             };
-                            xhr.send("verificationCode=" + encodeURIComponent(verificationCode) + "&userId=" + encodeURIComponent(userId));
+                            xhr.send("verificationCode=" + encodeURIComponent(verificationCode) + "&user_id=" + encodeURIComponent(userId));
                         }
                     };
 

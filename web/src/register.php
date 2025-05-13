@@ -106,7 +106,9 @@
                     <strong>Password</strong>
                     <input type="password" name="password" id="password" placeholder="Enter your password"
                         required><br><br>
-                    <input type="submit" name="submit" value="Register" class="btn btn-primary"><strong id="form-messages" class="text-red-700 ml-2"></strong><br><br>
+                    <input type="submit" name="submit" value="Register" class="btn btn-primary"><strong id="form-messages" class="text-red-700 ml-2"></strong>
+                    <div class="loader align-middle hidden"></div>
+                    <br><br>
                     <span class="text-sm">or, if you already have an account, </span><a
                         class="font-bold underline hover:decoration-transparent" href="login.php">Log In</a><br>
                 </form>
@@ -114,7 +116,7 @@
             <script>
                 document.getElementById("registration").addEventListener("submit", function (event) {
                     event.preventDefault(); // Prevent the default form submission
-
+                    
                     const formData = new FormData(this); // Create a FormData object from the form
 
                     fetch("../api/register.php", {
@@ -126,10 +128,20 @@
                         console.log("Raw response:", text); // See what's returned
                         const data = JSON.parse(text); // Now safely parse
                         if (data.error) {
+
                             document.getElementById("form-messages").innerText = data.error;
                             document.getElementById("form-messages").classList.remove("hidden");
                         } else {
-                            window.location.href = "home.php";
+
+                            document.getElementById("form-messages").innerText = "Registration successful!";
+                            document.getElementById("form-messages").classList.add("text-green-700");
+                            document.getElementById("form-messages").classList.remove("text-red-700");
+                            document.getElementById("form-messages").classList.remove("hidden");
+
+                            // Redirect to the verification page after a short delay
+                            setTimeout(() => {
+                                window.location.href = "verify";
+                            }, 1000); // 1 second delay
                         }
                     })
                 });

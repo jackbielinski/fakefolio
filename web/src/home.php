@@ -112,14 +112,19 @@
                             <strong>You have no new objectives.</strong>
                         </div>
                     </div><br>
-                    <div id="content-header">
-                        <img src="../_static/icons/mail.png" alt="Message" width="30" class="inline-block">
-                        <h2 class="font-bold uppercase text-2xl align-middle ml-1 inline-block">Messages</h2>
-                        <a href="../objectives.php" class="float-right text-sm text-gray-400">View All</a><br>
-                        <div id="messages-cleared" class="text-center text-gray-400 mt-2">
-                            <strong>You have no new messages.</strong>
-                        </div>
-                    </div><br>
+                    <?php
+                        $message_settings = getUserSocialSettings($_SESSION['user_id'])["allow_messages"];
+                        if ($message_settings == 1) {
+                            echo "<div id='content-header'>";
+                            echo "<img src='../_static/icons/mail.png' alt='Messages' width='30' class='inline-block'>";
+                            echo "<h2 class='font-bold uppercase text-2xl align-middle ml-2 inline-block'>Messages</h2>";
+                            echo "<a href='../messages.php' class='float-right text-sm text-gray-400'>View All</a>";
+                            echo "<div id='messages-cleared' class='text-center text-gray-400 mt-2'>";
+                            echo "<strong>You have no new messages.</strong>";
+                            echo "</div>";
+                            echo "</div><br>";
+                        }
+                    ?>
                     <div id="content-header">
                         <img src="../_static/icons/news.png" alt="Newspaper" width="30" class="inline-block">
                         <h2 class="font-bold uppercase text-2xl align-middle ml-1 inline-block">News</h2>

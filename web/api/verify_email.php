@@ -3,7 +3,7 @@
 
     // Find out if the verification code is valid
     $verificationCode = $_POST['verificationCode'] ?? null;
-    $userId = $_POST['userId'] ?? null;
+    $userId = $_POST['user_id'] ?? null;
 
     if ($verificationCode && $userId) {
         $user = getUserInfo($userId);

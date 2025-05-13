@@ -1,6 +1,7 @@
 <?php
     session_start();
     require_once "../../inc/func.php";
+    require "../../vendor/autoload.php";
 
     if (!isset($_GET['user_id'])) {
         // Get username

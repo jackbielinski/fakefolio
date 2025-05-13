@@ -1,4 +1,22 @@
 <?php
+    use PHPMailer\PHPMailer\PHPMailer;
+    use PHPMailer\PHPMailer\Exception;
+    use Symfony\Component\Dotenv\Dotenv;
+
+    // Dynamically resolve the vendor autoload path based on where this file is included from
+    $autoloadPaths = [
+        __DIR__ . '/../vendor/autoload.php', // typical for /inc/func.php
+        __DIR__ . '/vendor/autoload.php',    // fallback if vendor is in the same dir
+        __DIR__ . '/../../vendor/autoload.php', // if called from a deeper structure
+        $_SERVER['DOCUMENT_ROOT'] . '/vendor/autoload.php', // web root
+    ];
+    foreach ($autoloadPaths as $autoloadPath) {
+        if (file_exists($autoloadPath)) {
+            require_once $autoloadPath;
+            break;
+        }
+    }
+
     function getDB() {
         static $conn = null;
 
@@ -111,7 +129,40 @@
             // Generate verification code
             $verificationCode = bin2hex(random_bytes(8));
             $stmt = $conn->prepare("INSERT INTO verification_codes (verification_code, requesting_email, associated_user) VALUES (?, ?, ?)");
-            return $stmt->execute([$verificationCode, $email, $userId]); // Returns true on success, false on failure
+            $stmt->execute([$verificationCode, $email, $userId]);
+
+            $email = getUserInfo($userId)['email'];
+            $username = getUserInfo($userId)['username'];
+            $mail = new PHPMailer(true);
+
+            try {
+                $dotenv = new Dotenv();
+                $dotenv->load(__DIR__ . '/.env');
+
+                //Server settings
+                $mail->isSMTP();
+                $mail->Host = $_ENV["MAIL_HOST"];
+                $mail->SMTPAuth = true;
+                $mail->Username = $_ENV["MAIL_USERNAME"];
+                $mail->Password = $_ENV["MAIL_PASSWORD"];
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                $mail->SMTPAutoTLS = false;
+                $mail->Port = $_ENV["MAIL_PORT"];
+
+                //Recipients
+                $mail->setFrom($_ENV["MAIL_USERNAME"], 'Fakefolio Support');
+                $mail->addAddress($email, $username);
+
+                // Content
+                $mail->isHTML(true);
+                $mail->Subject = 'Verify your E-mail Address';
+                $mail->Body = '<p>Hi ' . htmlspecialchars($username) . ',</p><p>Thank you, and welcome to Fakefolio! To complete your registration, please <a href="https://fakefolio.com/verify.php?verificationCode=' . htmlspecialchars($verificationCode) . '&user_id=' . htmlspecialchars($userId) . '">verify your E-mail address</a>.</p><p>Link not working? Use this verification code on-site: ' . htmlspecialchars($verificationCode) . '</p><p>If you did not create an account, please ignore this email.</p><p>Best regards,<br>Fakefolio Team</p>';
+
+                $mail->send();
+                echo json_encode(['success' => 'Verification requested successfully']);
+            } catch (Exception $e) {
+                echo json_encode(['error' => 'Failed to send verification request: ' . $mail->ErrorInfo]);
+            }
         }
     }
 

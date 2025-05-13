@@ -4,7 +4,6 @@
     $active_user = getUserInfo($_SESSION['user_id']);
 
     if (!$active_user) {
-        echo "<p>User not found.</p>";
         exit;
     }
 ?>

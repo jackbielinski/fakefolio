@@ -2,11 +2,11 @@
     include "../inc/main.php";
 
     if (isset($_SESSION['user_id'])) {
-        header("Location: ./home.php");
+        header("Location: home.php");
         exit;
     }
 ?>
-<!DOCTYPE html>
+<!DOCTYPE html>      
 <html lang="en">
 <head>
     <meta charset="UTF-8">
