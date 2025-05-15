@@ -28,8 +28,11 @@
             echo '<span class="dropbtn">' . htmlspecialchars($username) . '</span>';
             echo '</span>';
             echo '<div class="dropdown-content">';
-            if ($social_settings["allow_messages"] == 1) {
+            if ($social_settings["allow_messages"] == 1 && $social_settings["settings_enabled"] == 1) {
                 echo '<a href="messages">Messages</a>';
+            }
+            if ($social_settings["allow_friend_requests"] == 1 && $social_settings["settings_enabled"] == 1) {
+                echo '<a href="friends">Friends</a>';
             }
             echo '<a href="settings">Account Settings</a>';
             if (isAdmin($_SESSION['user_id'])) {
@@ -41,7 +44,13 @@
             echo "</div>";
         } else {
             echo "<a href=\"index\"><img src=\"../_static/fakefolio_wordmark_white.png\" alt=\"Fakefolio\" width=\"150\"></a>";
-            echo '<div id="nav"><a href="login">Log In</a><a href="register">Register</a></div>';
+            echo '<div id="nav">';
+            // Log in and Register
+            echo "<ul>";
+            echo "<li><a href=\"login\">Log In</a></li>";
+            echo "<li><a href=\"register\">Register</a></li>";
+            echo "</ul>";
+            echo '</div>';
         }
     ?>
 </div><br>

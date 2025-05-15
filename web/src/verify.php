@@ -2,13 +2,10 @@
     include "../inc/main.php";
 
     $verificationCode = $_GET['verificationCode'] ?? null;
-    $userId = $_GET['user_id'] ?? null;
+    $userId = $_GET['user_id'] ?? $_SESSION['user_id'] ?? null;
 
-    // If the verification code is not provided, valid, user is not logged in, or the user is already verified, redirect to the home page
-    
-
-    if (!isset($_SESSION['user_id']) || isEmailVerified($_SESSION["user_id"]) == true || getUserVerifiedEmails($_SESSION["user_id"]) > 0) {
-        header("Location: home");
+    if (!$userId) {
+        header("Location: login");
         exit;
     }
 ?>
@@ -31,7 +28,7 @@
                 </div>
                 <a id="skipBtn" href="home.php" class="float-right align-bottom text-2xl text-red-600 hover:text-red-800 hover:underline">Skip & risk losing my account</a>
                 <div id="checkVerify" class="text-center mt-7">
-                    <strong class="text-4xl">Check your inbox for an E-mail from @fakefolio.com.</strong><br><br>
+                    <strong class="text-4xl">Check your inbox for an E-Mail from @fakefolio.com.</strong><br><br>
                     <span>We collect your E-mail address to relay important account updates and will never send marketing E-mails to your inbox, ever. Leaving your account unverified may lessen your chance of retreiving your account in the event you get locked out.</span>
                     <br><br><strong>Is the link not working? <a id="verifyWithCode" class="text-red-600 hover:text-red-800 hover:underline">Enter your verification code.</a></strong>
                     <div id="verification-code" class="hidden mt-5">

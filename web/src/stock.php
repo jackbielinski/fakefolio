@@ -1,11 +1,5 @@
 <?php
     include "../inc/main.php";
-
-    // Check if user is admin
-    if (!isAdmin($_SESSION['user_id'])) {
-        header("Location: index.php");
-        exit;
-    }
 ?>
 <!DOCTYPE html>
 <html lang="en">

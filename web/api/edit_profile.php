@@ -61,7 +61,7 @@
 
         // Check if email is valid, and if it is changed
         if ($email && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $errors[] = "Invalid email format.";
+            $errors[] = "Invalid E-Mail format.";
         } else {
             // Check if email is already taken
             $stmt = $conn->prepare("SELECT id FROM users WHERE email = ? AND id != ?");
@@ -71,6 +71,9 @@
             } else {
                 // Check for cooldown for email change
                 $cooldowns = getCooldowns($userId);
+                if (!is_array($cooldowns)) {
+                    $cooldowns = [];
+                }
                 $hasEmailCooldown = false;
                 foreach ($cooldowns as $cooldown) {
                     if ($cooldown['type'] === 'email_change') {

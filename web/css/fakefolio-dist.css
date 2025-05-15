@@ -647,10 +647,6 @@ video {
   table-layout: auto;
 }
 
-.border-collapse {
-  border-collapse: collapse;
-}
-
 .flex-wrap {
   flex-wrap: wrap;
 }
@@ -659,35 +655,25 @@ video {
   align-items: center;
 }
 
+.justify-end {
+  justify-content: flex-end;
+}
+
 .justify-center {
   justify-content: center;
+}
+
+.gap-3 {
+  gap: 0.75rem;
 }
 
 .gap-8 {
   gap: 2rem;
 }
 
-.overflow-x-auto {
-  overflow-x: auto;
-}
-
-.border {
-  border-width: 1px;
-}
-
-.border-gray-300 {
-  --tw-border-opacity: 1;
-  border-color: rgb(209 213 219 / var(--tw-border-opacity, 1));
-}
-
 .bg-gray-100 {
   --tw-bg-opacity: 1;
   background-color: rgb(243 244 246 / var(--tw-bg-opacity, 1));
-}
-
-.bg-gray-200 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(229 231 235 / var(--tw-bg-opacity, 1));
 }
 
 .bg-gradient-to-br {
@@ -706,16 +692,6 @@ video {
 
 .p-5 {
   padding: 1.25rem;
-}
-
-.px-4 {
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-
-.py-2 {
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
 }
 
 .text-left {
@@ -779,6 +755,11 @@ video {
 
 .uppercase {
   text-transform: uppercase;
+}
+
+.text-black {
+  --tw-text-opacity: 1;
+  color: rgb(0 0 0 / var(--tw-text-opacity, 1));
 }
 
 .text-gray-400 {
@@ -1057,6 +1038,35 @@ body {
   border-bottom: none;
 }
 
+/* Stocks table */
+
+.stockstable {
+  text-align: left;
+  border-collapse: collapse;
+}
+
+.stockstable thead {
+  font-weight: bold;
+  padding: 5px 10px;
+}
+
+.stockstable th {
+  padding: 5px 10px;
+}
+
+.stockstable td {
+  padding: 5px 10px;
+}
+
+.stockstable tr:nth-child(even) {
+  background-color: #fcfcfc;
+}
+
+.stockstable tbody tr:hover {
+  background-color: #e9e9e9;
+  cursor: pointer;
+}
+
 /* Mission Card */
 
 .mission-card {
@@ -1267,7 +1277,7 @@ textarea:focus {
   position: absolute;
   background-color: #353535;
   min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.4);
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.6);
   z-index: 1;
 }
 
@@ -1419,4 +1429,28 @@ iframe#command-frame {
 
 .hover\:decoration-transparent:hover {
   text-decoration-color: transparent;
+}
+
+@media (min-width: 640px) {
+  .sm\:my-1 {
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .sm\:my-2 {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .sm\:my-4 {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .md\:my-0 {
+    margin-top: 0px;
+    margin-bottom: 0px;
+  }
 }

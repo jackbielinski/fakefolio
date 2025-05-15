@@ -3,6 +3,7 @@
     "tailwindcss": "^3.4.17"
   },
   "dependencies": {
-    "chart.js": "^4.4.9"
+    "chart.js": "^4.4.9",
+    "tippy.js": "^6.3.7"
   }
 }

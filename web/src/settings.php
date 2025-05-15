@@ -201,6 +201,7 @@ if (!isset($_SESSION['user_id'])) {
                                     })
                                         .then(response => response.json())
                                         .then(data => {
+                                            console.log('Response:', data);
                                             if (data.error) {
                                                 handleError(data);
                                             } else {

@@ -23,15 +23,17 @@ include "../inc/main.php";
                 <strong class="text-3xl">No messages yet.</strong><br>
                 <span>Check back later for updates.</span>
             </div>
-            <!-- message -->
-            <div class="message">
-                <div id="sender">
-                    <img src="../_static/pfp/default.png" alt="Sender" width="30" class="inline-block">
-                    <strong>Message Sender</strong>
+            <div id="messages" class="hidden">
+                <div class="message">
+                    <div class="message-header">
+                        <strong>Sender Name</strong>
+                        <span class="text-gray-400">Date</span>
+                    </div>
+                    <div class="message-body">
+                        <p>This is a sample message content. It can be multiple lines long.</p>
+                    </div>
                 </div>
-                <strong class="text-xl">Message Subject</strong><br>
-                <span class="text-sm text-opacity-85">Date: 2025-01-01</span><br><br>
-                <span id="message-preview">Message preview...</span>
+                <!-- Repeat the message block for more messages -->
             </div>
         </div>
         <div id="footer" class="text-center">

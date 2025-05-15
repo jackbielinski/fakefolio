@@ -2,7 +2,11 @@
 module.exports = {
   content: ["./web/src/**/*.{html,js,php}"],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        fakefolio: "#b70000"
+      }
+    },
   },
   plugins: [],
 }

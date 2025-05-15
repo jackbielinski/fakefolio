@@ -15,7 +15,7 @@ if (!$active_user) {
     </div>
     <div class="modal-body">
         <strong>Are you sure you want to delete your account?</strong>
-        <span>This action cannot be done and you will lose all of your data, friends, and account settings. You can always create a new account for a fresh start or if you change your mind.</span><br><br>
+        <span>This action cannot be undone and you will lose all of your data, friends, and account settings. You can always create a new account for a fresh start or if you change your mind. <strong>Support will not be able to retrieve your account and data after you delete it.</strong></span><br><br>
         <form id="delete-account-form" method="POST">
             <table class="table-auto w-full">
                 <tr>

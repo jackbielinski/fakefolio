@@ -214,6 +214,35 @@ body {
     border-bottom: none;
 }
 
+/* Stocks table */
+
+.stockstable {
+    text-align: left;
+    border-collapse: collapse;
+}
+
+.stockstable thead {
+    font-weight: bold;
+    padding: 5px 10px;
+}
+
+.stockstable th {
+    padding: 5px 10px;
+}
+
+.stockstable td {
+    padding: 5px 10px;
+}
+
+.stockstable tr:nth-child(even) {
+    background-color: #fcfcfc;
+}
+
+.stockstable tbody tr:hover {
+    background-color: #e9e9e9;
+    cursor: pointer;
+}
+
 /* Mission Card */
 
 .mission-card {
@@ -420,7 +449,7 @@ textarea:focus {
     position: absolute;
     background-color: #353535;
     min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.4);
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.6);
     z-index: 1;
 }
 

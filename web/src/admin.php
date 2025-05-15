@@ -15,6 +15,9 @@
     <link rel="stylesheet" href="../css/fakefolio-dist.css">
     <script src="../js/modalManager.js"></script>
     <script src="../js/formHandler.js"></script>
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/animations/scale.css">
     <title>Fakefolio</title>
 </head>
 <body>
@@ -70,26 +73,23 @@
                         <div class="profile-card-body ml-2 inline-block align-middle">
                             <strong id="username" class="text-2xl">User Management</strong><br>
                             <button id="find-user" class="btn-sm btn-primary mt-2">Find user</button>
-                            <button id="edit-user" class="btn-sm btn-primary mt-2">Edit user</button>
-                            <button id="delete-user" class="btn-sm btn-primary mt-2">Remove user cooldown(s)</button>
+                        </div>
+                    </div><br>
+                    <div class="profile-card">
+                        <img id="pfp" src="../_static/fsx_wordmark_red.png" alt="Default" width="100" class="inline-block">
+                        <div class="profile-card-body ml-2 inline-block align-middle">
+                            <strong id="username" class="text-2xl">Manage Stock Exchange</strong><br>
+                            <button id="create-item" class="btn-sm btn-primary mt-2">Set FSX Order Fee</button>
+                            <button id="send-message" class="btn-sm btn-primary mt-2">a</button>
+
                         </div>
                     </div>
                 </div>
-                <div><br>
-                    <div class="profile-card">
-                        <img id="pfp" src="../_static/icons/package.png" alt="Package" width="100" class="inline-block">
-                        <div class="profile-card-body ml-2 inline-block align-middle">
-                            <strong id="username" class="text-2xl">Item Manager</strong><br>
-                            <button id="view-items" class="btn-sm btn-primary mt-2">View existing item</button>
-                            <button id="create-item" class="btn-sm btn-secondary mt-2">Create new item</button>
-                        </div>
-                    </div>
-                </div><br>
             </div>
             <div id="modal" class="modal">
                 <div id="modal-content" class="hidden"></div>
             </div>
-                <script>
+                <script type="module">
                         // Function to handle success response from the server
                         function handleSuccess(response) {
                             // Check if the response is a success message
@@ -180,12 +180,30 @@
                                             searchedUserInfo.querySelector('#risk-value').innerText = formatNumberRisk(risk);
                                             searchedUserInfo.querySelector('#credibility-value').innerText = formatNumberRisk(credibility);
 
-                                            document.getElementById('action-view-btn').addEventListener('click', function() {
-                                                modalManager.close();
-                                                modalManager.load("../modals/admin/actions.php?user_id=" + userId, function() {
-                                                    // Callback function after the modal is opened
-                                                    console.log("Edit user modal opened.");
-                                                });
+                                            // Tooltips
+
+                                            tippy('#ban', {
+                                                content: 'Ban User',
+                                                theme: 'light',
+                                                animation: 'scale',
+                                                arrow: true,
+                                                placement: 'bottom',
+                                            });
+
+                                            tippy('#warn', {
+                                                content: 'View Warnings',
+                                                theme: 'light',
+                                                animation: 'scale',
+                                                arrow: true,
+                                                placement: 'bottom',
+                                            });
+
+                                            tippy('#edit', {
+                                                content: 'Edit',
+                                                theme: 'light',
+                                                animation: 'scale',
+                                                arrow: true,
+                                                placement: 'bottom',
                                             });
                                         } else {
                                             handleError({ message: "User not found." });
