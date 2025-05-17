@@ -299,4 +299,37 @@
         $stmt = $conn->prepare("UPDATE social_settings SET allow_messages = 1, allow_friend_requests = 1, allow_profile_wall_comments = 1 WHERE associated_user = ?");
         return $stmt->execute([$userId]); // Returns true on success, false on failure
     }
+
+    // STOCKS
+    function getStocks() {
+        $conn = getDB();
+
+        $stmt = $conn->prepare("SELECT * FROM stocks");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC); // Returns array of stocks
+    }
+
+    function getStockPrice($stockId) {
+        $conn = getDB();
+
+        $stmt = $conn->prepare("SELECT price, date FROM stock_prices WHERE stock_id = ? ORDER BY date DESC LIMIT 1");
+        $stmt->execute([$stockId]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    function getStockById($stockId) {
+        $conn = getDB();
+
+        $stmt = $conn->prepare("SELECT * FROM stocks WHERE stock_id = ?");
+        $stmt->execute([$stockId]);
+        return $stmt->fetch(PDO::FETCH_ASSOC); // Returns stock data
+    }
+
+    function getStockByTicker($ticker) {
+        $conn = getDB();
+
+        $stmt = $conn->prepare("SELECT * FROM stocks WHERE stock_ticker = ?");
+        $stmt->execute([$ticker]);
+        return $stmt->fetch(PDO::FETCH_ASSOC); // Returns stock data
+    }
 ?>

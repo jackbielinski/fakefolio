@@ -1,5 +1,11 @@
 <?php
     include "../inc/main.php";
+
+    $_GET['ticker'] = $_GET['ticker'] ?? null;
+
+    if (!isset($_GET['ticker']) || empty($_GET['ticker'])) {
+        header("Location: stock_exchange");
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -16,12 +22,43 @@
         <div id="content-container">
             <?php include "../inc/header.php"; ?>
             <div id="content">
-                <div class="inline-block">
-                    <img class="inline-block" src="../_static/icons/stocks.png" alt="Stock" width="40">
-                    <strong class="text-3xl inline-block align-middle ml-1"><span class="text-green-600">$TICK </span>Stock Name</strong>
-                </div>
-                <!-- make a price change chart -->
-                <div id="chart" class="w-full h-64 bg-gray-100 mt-5 mb-5"></div>
+                <?php
+                    $stock = getStockByTicker($_GET['ticker']);
+
+                    if (!$stock) {
+                        echo "<div class='text-center'>";
+                        echo "<h2 class='text-2xl'>Stock not found</h2>";
+                        echo "<p class='text-gray-500'>The stock you are looking for does not exist.</p><br>";
+                        echo "<a href='stock_exchange' class='btn btn-primary'>Go back to Stock Exchange</a>";
+                        exit;
+                    } else {
+                        $stockId = $stock['stock_id'];
+                        $latest_price = getStockPrice($stockId);
+                        if (is_array($latest_price) && isset($latest_price['price'], $latest_price['date'])) {
+                            $price = $latest_price['price'];
+                            $price_date = date("F j, Y", strtotime($latest_price['date']));
+                        } else {
+                            $price = "N/A";
+                            $price_date = "N/A";
+                        }
+
+                        echo "<h2 class='text-2xl'>" . htmlspecialchars($stock['stock_name']) . " ($" . htmlspecialchars($stock['stock_ticker']) . ")</h2>";
+                        echo "<p class='text-gray-500'>Latest Price: <span class='text-green-700'>";
+                        if (is_numeric($price)) {
+                            echo "$" . number_format($price, 2);
+                        } else {
+                            echo htmlspecialchars($price);
+                        }
+                        echo "</span> on " . $price_date . "</p>";
+                        echo "<div class='mt-4'>";
+                        echo "<button class='btn btn-primary' id='buy-stock' data-stock-id='" . htmlspecialchars($stockId) . "'>Buy</button>";
+                        echo "<button class='btn btn-secondary' id='sell-stock' data-stock-id='" . htmlspecialchars($stockId) . "'>Sell</button>";
+                        echo "<button class='btn btn-secondary' id='add-watchlist' data-stock-id='" . htmlspecialchars($stockId) . "'>Add to Watchlist</button>";
+                        echo "</div>";
+                    }
+                ?>
+                <script>
+                </script>
             </div>
         </div>
         <div id="footer" class="text-center">

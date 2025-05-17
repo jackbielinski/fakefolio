@@ -59,10 +59,10 @@ if (!$active_user) {
                         // Echo
                         echo "<tr>";
                         echo "<td><a href='javascript:void(0)' class='stock-link' data-ticker='{$stock['stock_ticker']}'>{$stock['stock_ticker']}</a></td>";
-                        echo "<td>{$owned_shares}</td>";
-                        echo "<td>{$latest_price['price']}</td>";
-                        echo "<td>{$total_value}</td>";
-                        echo "<td><button class='btn-sm btn-primary'>Sell</button></td>";
+                        echo "<td class='shares'>{$owned_shares}</td>";
+                        echo "<td class='price'>{$latest_price['price']}</td>";
+                        echo "<td class='value'>{$total_value}</td>";
+                        echo "<td><button id='sell-" . $stock_id . "' class='btn-sm btn-primary'>Sell</button></td>";
                         echo "</tr>";
                     }
                 } else {

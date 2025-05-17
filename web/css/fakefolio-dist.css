@@ -607,6 +607,18 @@ video {
   margin-top: 1.75rem;
 }
 
+.mr-2 {
+  margin-right: 0.5rem;
+}
+
+.mr-1 {
+  margin-right: 0.25rem;
+}
+
+.mt-4 {
+  margin-top: 1rem;
+}
+
 .block {
   display: block;
 }
@@ -817,10 +829,6 @@ video {
   color: rgb(202 138 4 / var(--tw-text-opacity, 1));
 }
 
-.text-opacity-85 {
-  --tw-text-opacity: 0.85;
-}
-
 .underline {
   text-decoration-line: underline;
 }
@@ -833,6 +841,10 @@ video {
 
 .blur {
   --tw-blur: blur(8px);
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+
+.filter {
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
 
@@ -1120,6 +1132,11 @@ body {
 
 /* Scores */
 
+.base-stat {
+  font-weight: bold;
+  font-size: 2em;
+}
+
 .stat {
   color: #b70000;
   font-weight: bold;
@@ -1244,6 +1261,19 @@ input[type="text"], input[type="email"], input[type="password"], input[type="num
 }
 
 input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, input[type="number"]:focus, input[type="tel"]:focus, input[type="url"]:focus {
+  border: 1px solid #b70000;
+  outline: none;
+}
+
+select {
+  width: 100%;
+  padding: 10px 5px;
+  margin: 5px 0 20px 0;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+select:focus {
   border: 1px solid #b70000;
   outline: none;
 }
@@ -1432,19 +1462,21 @@ iframe#command-frame {
 }
 
 @media (min-width: 640px) {
-  .sm\:my-1 {
-    margin-top: 0.25rem;
-    margin-bottom: 0.25rem;
-  }
-
   .sm\:my-2 {
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
   }
 
-  .sm\:my-4 {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
+  .sm\:mt-0 {
+    margin-top: 0px;
+  }
+
+  .sm\:inline-block {
+    display: inline-block;
+  }
+
+  .sm\:align-top {
+    vertical-align: top;
   }
 }
 

@@ -32,7 +32,7 @@
                     echo "<img src='../_static/" . $profile_picture_path . "' alt='Profile Picture' width='100' class='inline-block mr-3'>";
                     }
                 ?>
-                <div id="playerstats" class="inline-block align-top">
+                <div id="playerstats" class="sm:inline-block sm:align-top mt-2 sm:mt-0">
                     <?php
                         $username = getUserById($_SESSION["user_id"])["username"];
 

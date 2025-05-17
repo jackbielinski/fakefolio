@@ -26,7 +26,7 @@
     // Get stock prices
     $stock_prices = [];
     foreach ($shares as $share) {
-        $stmt = $conn->prepare("SELECT price FROM stock_prices WHERE stock_id = :stock_id");
+        $stmt = $conn->prepare("SELECT price FROM stock_prices WHERE stock_id = :stock_id ORDER BY date DESC LIMIT 1");
         $stmt->bindParam(':stock_id', $share['stock_id']);
         $stmt->execute();
         $price = $stmt->fetchColumn();
