@@ -51,45 +51,30 @@ if (!$active_user) {
                             document.querySelector(".credibility").innerText = Number(data.credibility).toLocaleString();
                             document.querySelector(".risk").innerText = Number(data.risk).toLocaleString();
                         });
+                }
 
+                function fetchPortfolioVal() {
                     fetch(`../api/get_user_portfolio.php?user_id=${<?php echo $_SESSION['user_id']; ?>}`)
                         .then(response => response.json())
                         .then(data => {
                             let totalValue = 0;
                             data.forEach(stock => {
-                                const price = parseFloat(stock.price);
-                                const quantity = parseInt(stock.quantity);
+                                const price = parseFloat(stock.current_price);
+                                const quantity = parseInt(stock.owned_shares);
                                 if (!isNaN(price) && !isNaN(quantity)) {
                                     totalValue += price * quantity;
                                 }
                             });
                             const formattedValue = `$${totalValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
                             document.querySelector("#portfolio-value .rank").innerText = formattedValue;
-
-                            setInterval(() => {
-                                fetch(`../api/get_user_portfolio.php?user_id=${<?php echo $_SESSION['user_id']; ?>}`)
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        let totalValue = 0;
-                                        data.forEach(stock => {
-                                            const price = parseFloat(stock.price);
-                                            const quantity = parseInt(stock.quantity);
-                                            if (!isNaN(price) && !isNaN(quantity)) {
-                                                totalValue += price * quantity;
-                                            }
-                                        });
-                                        const formattedValue = `$${totalValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-                                        document.querySelector("#portfolio-value .rank").innerText = formattedValue;
-                                    });
-                            }, 2500);
                         });
                 }
 
-                // Call the function to fetch and display credibility and risk
                 fetchValCredRisk();
+                fetchPortfolioVal();
 
-                // Update the values every 5 seconds
                 setInterval(fetchValCredRisk, 2500);
+                setInterval(fetchPortfolioVal, 2500);
             </script>
             <div id="content">
                 <div id="buttons">
@@ -114,16 +99,73 @@ if (!$active_user) {
                                 const value = parseFloat(change.innerText.replace(/[%]/g, ''));
                                 change.innerText = `$${formatNumber(value)}`;
                             });
+
+                            // For each row, when the sell button is clicked, open the sell modal
+                            document.querySelectorAll(".btn-primary").forEach(button => {
+                                button.addEventListener("click", () => {
+                                    const requestSellStockId = button.id.split("-")[1];
+                                    modalManager.load(`../modals/stocks/sell.php?stock_id=${requestSellStockId}`, function () {
+                                        const quantityInput = document.getElementById("selectedQuantity");
+                                        const totalSpan = document.querySelector("#sellSummary #total");
+                                        const priceSpan = document.getElementById("price");
+                                        const sellFormMessages = document.getElementById("sell-form-messages");
+
+                                        function formatNumber(num) {
+                                            return parseFloat(num).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                                        }
+
+                                        function updateSubtotal() {
+                                            const quantity = parseInt(quantityInput.value);
+                                            if (stockId && quantity > 0) {
+                                                fetch(`../api/get_stock_data.php?stock_id=${requestSellStockId}`)
+                                                    .then(response => response.json())
+                                                    .then(data => {
+                                                        const price = parseFloat(data.latest_price);
+                                                        const subtotal = price * quantity;
+
+                                                        priceSpan.innerText = `$${formatNumber(price)}`;
+
+                                                        // Get owned shares
+                                                        fetch(`../api/get_user_portfolio.php?stock_id=${requestSellStockId}`)
+                                                            .then(response => response.json())
+                                                            .then(data => {
+                                                                const ownedShares = data.reduce((sum, entry) => {
+                                                                    const shares = parseInt(entry.owned_shares);
+                                                                    console.log(`Adding ${shares} shares from`, entry);
+                                                                    return sum + shares;
+                                                                }, 0);
+
+                                                                if (ownedShares < quantity) {
+                                                                    totalSpan.classList.add("text-red-600");
+                                                                    sellFormMessages.classList.remove("hidden");
+                                                                    sellFormMessages.classList.add("text-red-700");
+                                                                    sellFormMessages.innerHTML = `<br>You cannot sell more shares than you own.`;
+                                                                } else {
+                                                                    totalSpan.classList.remove("text-red-600");
+                                                                    sellFormMessages.classList.add("hidden");
+                                                                    sellFormMessages.innerHTML = "";
+                                                                    totalSpan.innerText = `$${formatNumber(subtotal)}`;
+                                                                }
+                                                            });
+                                                    });
+                                            } else {
+                                                subtotalSpan.innerText = "$0.00";
+                                                totalSpan.innerText = "$0.00";
+                                            }
+                                        }
+                                    });
+                                });
+                            });
                         });
                     });
 
                     purchaseButton.addEventListener("click", () => {
                         modalManager.load('../modals/stocks/purchase.php', function () {
-                            // use query querySelector
                             const stockSelect = document.getElementById("selectedStock");
                             const quantityInput = document.getElementById("selectedQuantity");
-
-                            // Define cleanMoney in the outer scope
+                            const subtotalSpan = document.querySelector("#purchaseSummary #subtotal");
+                            const orderFeeSpan = document.querySelector("#purchaseSummary .fee");
+                            const totalSpan = document.querySelector("#purchaseSummary #total");
                             let cleanMoney = 0;
 
                             // Fetch clean money and set balance
@@ -132,7 +174,6 @@ if (!$active_user) {
                                 .then(data => {
                                     const cleanMoneySpan = document.querySelector("#purchaseSummary #clean");
                                     cleanMoneySpan.innerText = `$${data.clean_money}`;
-
                                     cleanMoney = parseFloat(data.clean_money.replace(/[$,]/g, ''));
                                 });
 
@@ -143,73 +184,80 @@ if (!$active_user) {
                             function updateSubtotal() {
                                 const stockId = stockSelect.value;
                                 const quantity = parseInt(quantityInput.value);
-                                const subtotalSpan = document.querySelector("#purchaseSummary #subtotal");
-                                const orderFeeSpan = document.querySelector("#purchaseSummary .fee");
-                                const totalSpan = document.querySelector("#purchaseSummary #total");
-
-                                if (!stockId || isNaN(quantity) || quantity <= 0) {
-                                    subtotalSpan.innerText = "$0.00";
-                                    orderFeeSpan.innerText = "0.0%";
-                                    totalSpan.innerText = "$0.00";
-                                    return;
-                                } else {
-                                    // Fetch stock price from get_stock_data.php
+                                if (stockId && quantity > 0) {
                                     fetch(`../api/get_stock_data.php?stock_id=${stockId}`)
                                         .then(response => response.json())
                                         .then(data => {
-                                            const stockPrice = parseFloat(data.latest_price);
-                                            if (isNaN(stockPrice)) {
-                                                subtotalSpan.innerText = "$0.00";
-                                                orderFeeSpan.innerText = "0.0%";
-                                                totalSpan.innerText = "$0.00";
-                                                return;
-                                            }
-                                            const subtotal = stockPrice * quantity;
+                                            const price = parseFloat(data.latest_price);
+                                            const subtotal = price * quantity;
+                                            // Fetch order fee percentage
+                                            fetch(`../api/get_stock_exchange_settings.php`)
+                                                .then(response => response.json())
+                                                .then(data => {
+                                                    const orderFee = data.order_fee;
+                                                    const orderFeeAmount = subtotal * (orderFee / 100);
+                                                    const total = subtotal + orderFeeAmount;
+                                                    subtotalSpan.innerText = `$${formatNumber(subtotal)}`;
+                                                    orderFeeSpan.innerText = `${orderFee}%`;
+                                                    totalSpan.innerText = `$${formatNumber(total)}`;
+                                                    // Check if the total is greater than clean money
+                                                    if (total > cleanMoney) {
+                                                        totalSpan.classList.add("text-red-600");
+                                                        orderFeeSpan.classList.add("text-red-600");
+                                                        subtotalSpan.classList.add("text-red-600");
+                                                    } else {
+                                                        totalSpan.classList.remove("text-red-600");
+                                                        orderFeeSpan.classList.remove("text-red-600");
+                                                        subtotalSpan.classList.remove("text-red-600");
+                                                    }
 
-                                            // Calculate subtotal
-                                            subtotalSpan.innerText = `$${formatNumber(subtotal)}`;
-                                        })
-                                        .catch(error => {
-                                            console.error('Error fetching stock data:', error);
+                                                    // Disable/enable the purchase button based on the total
+                                                    const purchaseButton = document.getElementById("confirm-purchase");
+                                                    if (total > cleanMoney) {
+                                                        purchaseButton.disabled = true;
+                                                        purchaseButton.classList.add("disabled");
+                                                    } else {
+                                                        purchaseButton.disabled = false;
+                                                        purchaseButton.classList.remove("disabled");
+                                                    }
+                                                });
                                         });
-
-                                    // Fetch order fee from get_stock_exchange_settings.php
-                                    fetch(`../api/get_stock_exchange_settings.php`)
-                                        .then(response => response.json())
-                                        .then(data => {
-                                            const orderFee = subtotal * (data.order_fee / 100); // Convert percentage to decimal
-                                            const total = subtotal + orderFee;
-
-                                            subtotalSpan.innerText = `$${formatNumber(subtotal)}`;
-                                            if (subtotal > 0) {
-                                                orderFeeSpan.innerText = `${formatNumber(orderFee / subtotal * 100)}%`;
-                                            } else {
-                                                orderFeeSpan.innerText = "0.0%";
-                                            }
-                                            totalSpan.innerText = `$${formatNumber(total)}`;
-
-                                            // Check if the total is greater than clean money
-                                            if (total > cleanMoney) {
-                                                totalSpan.classList.add("text-red-600");
-                                                totalSpan.classList.remove("text-green-600");
-                                                document.querySelector("#purchaseSummary button").classList.add("disabled");
-                                            } else {
-                                                totalSpan.classList.add("text-green-600");
-                                                totalSpan.classList.remove("text-red-600");
-                                                document.querySelector("#purchaseSummary button").classList.remove("disabled");
-                                            }
-                                        })
-                                        .catch(error => {
-                                            console.error('Error fetching order fee:', error);
-                                        });
+                                } else {
+                                    subtotalSpan.innerText = "$0.00";
+                                    orderFeeSpan.innerText = "0%";
+                                    totalSpan.innerText = "$0.00";
                                 }
                             }
 
+                            // Set max quantity to the maximum number of shares the user can buy (based on total including fee)
+                            const maxButton = document.getElementById("max");
+                            maxButton.addEventListener("click", () => {
+                                const stockId = stockSelect.value;
+                                if (stockId) {
+                                    // Fetch stock price and order fee
+                                    Promise.all([
+                                        fetch(`../api/get_stock_data.php?stock_id=${stockId}`).then(res => res.json()),
+                                        fetch(`../api/get_stock_exchange_settings.php`).then(res => res.json())
+                                    ]).then(([stockData, settingsData]) => {
+                                        const price = parseFloat(stockData.latest_price);
+                                        const orderFee = parseFloat(settingsData.order_fee) / 100;
+                                        // maxQuantity = floor(cleanMoney / (price * (1 + orderFee)))
+                                        const maxQuantity = Math.floor(cleanMoney / (price * (1 + orderFee)));
+                                        quantityInput.value = maxQuantity > 0 ? maxQuantity : 0;
+                                        updateSubtotal();
+                                    });
+                                }
+                            });
+
+                            // Update subtotal when stock or quantity changes
                             stockSelect.addEventListener("change", updateSubtotal);
                             quantityInput.addEventListener("input", updateSubtotal);
+
+                            // Initial update
+                            updateSubtotal();
                         });
                     });
-                </script>
+                </script> 
                 <div id="trending">
                     <h1 class="font-bold text-2xl">Trending</h1>
                     <!-- make a table with a column for rank, name, ticker, users holding, change, and price -->
@@ -314,48 +362,42 @@ if (!$active_user) {
                                             .then(response => response.json())
                                             .then(data => {
                                                 const latestPrice = parseFloat(data.latest_price);
-                                                const prevPrice = row.cells[5];
+                                                const priceCell = row.cells[5];
+                                                const changeCell = row.cells[4];
 
                                                 function formatNumber(num) {
                                                     return parseFloat(num).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
                                                 }
 
-                                                // Set the new price and format with commas
-                                                const formattedPrice = `$${formatNumber(latestPrice)}`;
-                                                prevPrice.innerText = formattedPrice;
-                                                // Update the change percentage and color
-                                                const changeCell = row.cells[4];
-                                                // Store previous price in a data attribute
+                                                // Get previous price from data attribute, or use latestPrice if not set
                                                 const prevStoredPrice = parseFloat(row.getAttribute('data-prev-price')) || latestPrice;
-                                                const change = ((latestPrice - prevStoredPrice) / prevStoredPrice) * 100;
-                                                // Add a sign before the change percentage
+                                                // Calculate change percentage
+                                                const change = prevStoredPrice === 0 ? 0 : ((latestPrice - prevStoredPrice) / prevStoredPrice) * 100;
                                                 const sign = change > 0 ? '+' : '';
-                                                // Format the change percentage with commas
                                                 const formattedChange = `${sign}${formatNumber(change)}%`;
 
-                                                changeCell.innerText = formattedChange;
-                                                // Depending on the change, set the color
+                                                // Triangle icon logic
+                                                let triangleIcon = '';
+                                                if (change > 0) {
+                                                    triangleIcon = `<img src="../_static/icons/triangle-up.png" alt="Up" class="inline-block align-middle mr-1" style="width:12px;height:12px;">`;
+                                                } else if (change < 0) {
+                                                    triangleIcon = `<img src="../_static/icons/triangle-down.png" alt="Down" class="inline-block align-middle mr-1" style="width:12px;height:12px;">`;
+                                                }
+
+                                                // Update price and change cells
+                                                priceCell.innerText = `$${formatNumber(latestPrice)}`;
+                                                changeCell.innerHTML = triangleIcon + formattedChange;
+
+                                                // Set color based on change
+                                                changeCell.classList.remove('text-green-600', 'text-red-600');
                                                 if (change > 0) {
                                                     changeCell.classList.add('text-green-600');
-                                                    changeCell.classList.remove('text-red-600');
                                                 } else if (change < 0) {
                                                     changeCell.classList.add('text-red-600');
-                                                    changeCell.classList.remove('text-green-600');
-                                                } else {
-                                                    changeCell.classList.remove('text-green-600', 'text-red-600');
                                                 }
-                                                // Update the stored previous price for next interval
+
+                                                // Store latest price for next interval
                                                 row.setAttribute('data-prev-price', latestPrice);
-
-                                                // Calculate the rank based on the number of users holding the stock
-                                                const userCount = parseInt(row.cells[3].innerText);
-                                                // Compare the user count with the other values
-                                                const otherRows = uniqueRows.filter(r => r !== row);
-                                                const higherRank = otherRows.filter(r => parseInt(r.cells[3].innerText) > userCount);
-                                                const rank = higherRank.length + 1;
-
-                                                // Update the rank cell
-                                                row.cells[0].innerText = rank;
                                             })
                                             .catch(error => {
                                                 console.error('Error fetching stock data:', error);

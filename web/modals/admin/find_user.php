@@ -35,9 +35,9 @@
                         <!-- 3 images next to each other with a 10px margin right -->
                         <strong>Actions</strong>
                         <div class="flex gap-3 mt-2">
-                            <img id="ban" src="../_static/icons/ban-grey.png" alt="Ban" width="50" class="inline-block" title="Ban User">
-                            <img id="warn" src="../_static/icons/warning-grey.png" alt="Warnings" width="50" class="inline-block" title="View Warnings">
-                            <img id="edit" src="../_static/icons/pencil-grey.png" alt="Edit" width="50" class="inline-block" title="Edit User">
+                            <img id="ban" src="../_static/icons/ban-grey.png" alt="Ban" width="50" class="inline-block">
+                            <img id="warn" src="../_static/icons/warning-grey.png" alt="Warnings" width="50" class="inline-block">
+                            <img id="edit" src="../_static/icons/pencil-grey.png" alt="Edit" width="50" class="inline-block">
                         </div><br><br>
                     </div>
                 </div><br><br>

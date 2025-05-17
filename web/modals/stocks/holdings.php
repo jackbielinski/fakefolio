@@ -28,16 +28,24 @@ if (!$active_user) {
                 <?php
                 $conn = getDB();
 
+                // Fetch all holdings for the user
                 $query = "SELECT * FROM shares WHERE user_id = ?";
                 $stmt = $conn->prepare($query);
                 $stmt->execute([$active_user['id']]);
                 $holdings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                if ($holdings) {
-                    foreach ($holdings as $holding) {
-                        $owned_shares = $holding['owned_shares'];
-                        $stock_id = $holding['stock_id'];
+                // Group holdings by stock_id (ticker)
+                $grouped_holdings = [];
+                foreach ($holdings as $holding) {
+                    $stock_id = $holding['stock_id'];
+                    if (!isset($grouped_holdings[$stock_id])) {
+                        $grouped_holdings[$stock_id] = 0;
+                    }
+                    $grouped_holdings[$stock_id] += $holding['owned_shares'];
+                }
 
+                if ($grouped_holdings) {
+                    foreach ($grouped_holdings as $stock_id => $owned_shares) {
                         // Get stock info
                         $query = "SELECT * FROM stocks WHERE stock_id = ?";
                         $stmt = $conn->prepare($query);
@@ -46,7 +54,7 @@ if (!$active_user) {
                         if (!$stock) {
                             continue; // Skip if stock not found
                         }
-                        
+
                         // Get latest price
                         $query = "SELECT * FROM stock_prices WHERE stock_id = ? ORDER BY date DESC LIMIT 1";
                         $stmt = $conn->prepare($query);
@@ -54,15 +62,20 @@ if (!$active_user) {
                         $latest_price = $stmt->fetch(PDO::FETCH_ASSOC);
 
                         // Calculate total value
-                        $total_value = $owned_shares * $latest_price['price'];
+                        $price = $latest_price ? $latest_price['price'] : 0;
+                        $total_value = $owned_shares * $price;
 
                         // Echo
                         echo "<tr>";
                         echo "<td><a href='javascript:void(0)' class='stock-link' data-ticker='{$stock['stock_ticker']}'>{$stock['stock_ticker']}</a></td>";
                         echo "<td class='shares'>{$owned_shares}</td>";
-                        echo "<td class='price'>{$latest_price['price']}</td>";
+                        echo "<td class='price'>{$price}</td>";
                         echo "<td class='value'>{$total_value}</td>";
                         echo "<td><button id='sell-" . $stock_id . "' class='btn-sm btn-primary'>Sell</button></td>";
+                        // When the button is clicked, it will open the sell modal
+                        echo "<script>";
+                        echo "document.getElementById('sell-" . $stock_id . "').addEventListener('click', function() {";
+                        echo "modalManager.open('web/modals/stocks/sell.php?stock_id=" . $stock_id . "');";
                         echo "</tr>";
                     }
                 } else {

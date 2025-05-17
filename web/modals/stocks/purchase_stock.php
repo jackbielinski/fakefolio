@@ -1,6 +1,8 @@
 <?php
 include "../../inc/main.php";
 
+$conn = getDB();
+
 $active_user = getUserInfo($_SESSION['user_id']);
 
 if (!$active_user) {
@@ -11,9 +13,10 @@ if (!$active_user) {
 if (isset($_GET['stock_id'])) {
     // Set the stock_id from the GET parameter
     $stock_id = $_GET['stock_id'];
-
-    // Set select value
-    echo "<script>document.getElementById('selectedStock').value = '{$stock_id}';</script>";
+} else {
+    // If no stock_id is provided, redirect or show an error
+    echo "<p>No stock ID provided.</p>";
+    exit;
 }
 ?>
 <div class="modal-content">
@@ -28,19 +31,21 @@ if (isset($_GET['stock_id'])) {
                     <span>Stock</span>
                 </td>
                 <td>
-                    <select id="selectedStock" name="stock" class="w-full">
-                        <option value="">Select a stock</option>
-                        <?php
-                        $stocks = getStocks();
+                    <?php
+                        if (isset($stock_id)) {
+                            // Get stock info
+                            $query = "SELECT * FROM stocks WHERE stock_id = ?";
+                            $stmt = $conn->prepare($query);
+                            $stmt->execute([$stock_id]);
+                            $stock = $stmt->fetch(PDO::FETCH_ASSOC);
 
-                        foreach ($stocks as $stock) {
-                            $price = getStockPrice($stock['stock_id'])['price'];
-                            $price = is_numeric($price) ? number_format($price, 2) : "N/A";
-
-                            echo "<option value='{$stock['stock_id']}'>{$stock['stock_name']} (\${$price}/share)</option>";
+                            if ($stock) {
+                                echo "<span class='text-green-700'>{$stock['stock_name']} (\${$stock['stock_ticker']})</span>";
+                            } else {
+                                echo "<span class='text-red-700'>Stock not found</span>";
+                            }
                         }
-                        ?>
-                    </select>
+                    ?>
                 </td>
             </tr>
             <tr>
@@ -66,11 +71,13 @@ if (isset($_GET['stock_id'])) {
                 <span class="fee">0%</span>&nbsp;<span class="text-sm font-bold text-gray-400">ORDER FEE</span>
             </div><br>
             <div>
-                <span id="total" class="base-stat text-green-700">$0.00</span>&nbsp;<span class="text-sm font-bold text-gray-400">TOTAL</span>
+                <span id="total" class="base-stat text-green-700">$0.00</span>&nbsp;<span
+                    class="text-sm font-bold text-gray-400">TOTAL</span>
                 <div class="float-right align-bottom">
                     <button type="submit" id="confirm-purchase" class="btn-sm btn-primary">Confirm Purchase</button>
                 </div>
             </div>
         </div>
+        <span id="buy-form-messages" class="hidden mt-3"></span>
     </div>
 </div>

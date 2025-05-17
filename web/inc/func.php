@@ -332,4 +332,27 @@
         $stmt->execute([$ticker]);
         return $stmt->fetch(PDO::FETCH_ASSOC); // Returns stock data
     }
+
+    function getUserShares($userId, $stockId = null) {
+        $conn = getDB();
+
+        if ($stockId) {
+            $stmt = $conn->prepare("SELECT owned_shares FROM shares WHERE user_id = ? AND stock_id = ?");
+            $stmt->execute([$userId, $stockId]);
+            $shares = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // Add up the owned shares
+            if ($shares) {
+                $stmt = $conn->prepare("SELECT SUM(owned_shares) AS total_shares FROM shares WHERE user_id = ? AND stock_id = ?");
+                $stmt->execute([$userId, $stockId]);
+                return $stmt->fetch(PDO::FETCH_ASSOC); // Returns total shares data
+            } else {
+                return null; // No shares found for this stock
+            }
+        } else {
+            $stmt = $conn->prepare("SELECT * FROM shares WHERE user_id = ?");
+            $stmt->execute([$userId]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC); // Returns all shares data
+        }
+    }
 ?>
