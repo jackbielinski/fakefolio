@@ -1,0 +1,406 @@
+@import "tailwindcss";
+
+body {
+    background-color: #e6e6e6;
+    font-family: Tahoma, sans-serif;
+}
+
+a {
+    color: #b70000;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Fonts */
+
+@font-face {
+    font-family: 'signature';
+    src: url('../_static/font/signature.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Elements */
+
+/* Highlight */
+
+.highlight {
+    font-family: 'signature', cursive;
+    background: transparent;
+    padding: 0;
+    display: inline-block;
+
+    /* use an inline SVG as a repeating wavy underline */
+    background-image: url("../_static/icon/needle_underline.svg");
+    background-repeat: repeat-x;
+    background-position: 0 calc(100% - 2px);
+    background-size: 20px 6px;
+    padding-bottom: 6px;
+
+    /* remove text-decoration so only the SVG underline shows */
+    text-decoration: none;
+}
+
+.highlight.blue {
+    color: #0066cc;
+    /* color the svg underline blue */
+    background-image: url("../_static/icon/needle_underline_blue.svg");
+}
+
+/* Fieldsets */
+
+fieldset {
+    padding: 1rem;
+    border: 1px solid #a7a7a7;
+    margin-bottom: 1rem;
+    background-color: #fcfcfc;
+}
+
+legend {
+    font-weight: bold;
+    padding: 0 0.5rem;
+}
+
+/* Profile elements */
+
+#avatar {
+    /* stretch to square */
+    object-fit: fill;
+    border: 2px solid #a7a7a7;
+    background-color: white;
+}
+
+.tabs {
+    margin-top: 1rem;
+    border-bottom: 1px solid #a7a7a7;
+    display: flex;
+    gap: 1rem;
+}
+
+.tabs a {
+    padding: 0.5rem 1rem;
+    color: black;
+    font-weight: bold;
+    border: 1px solid transparent;
+    border-bottom: none;
+}
+
+.tabs a:hover {
+    background-color: #b70000;
+    color: white;
+    border-bottom: none;
+}
+
+.tabs a.active {
+    background-color: white;
+    border: 1px solid #a7a7a7;
+    border-bottom: none;
+}
+
+.tabs a.active:hover {
+    color: black;
+}
+
+/* Tooltip */
+
+.tooltip-container {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    line-height: 0;
+}
+
+.tooltip-container .tooltip {
+    visibility: hidden;
+    width: max-content;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 0.25rem;
+    padding: 0.5rem;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%; /* Position above the element */
+    left: 50%;
+    margin-left: -60px;
+    opacity: 0;
+    white-space: nowrap;
+    display: inline-block;
+    transition: opacity 0.3s;
+}
+
+.tooltip-container:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
+}
+
+.tooltip-container .tooltip p, .tooltip-container .tooltip span {
+    margin: 0;
+    line-height: 1;
+    font-size: 12px;
+}
+
+/* Form requirement */
+
+.required {
+    color: red;
+    font-weight: bold;
+    font-size: x-small;
+    vertical-align: super;
+}
+
+.required::after {
+    content: "* required";
+}
+
+/* Buttons */
+
+.btn {
+    background-color: #8b8b8b;
+    color: white;
+    border: none;
+    padding: 0.25rem 1rem;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 1rem;
+    margin: 0.25rem 0.1rem;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-sm {
+    background-color: #8b8b8b;
+    color: white;
+    border: none;
+    padding: 0.1rem 0.25rem;
+    font-size: 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin: 0.25rem 0.1rem;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn:hover, .btn-sm:hover {
+    text-decoration: none;
+}
+
+/* Primary and Danger */
+
+.btn.primary, .btn-sm.primary, .btn.danger, .btn-sm.danger {
+    color: white;
+    background-color: #b70000;
+}
+
+.btn.primary:hover, .btn-sm.primary:hover, .btn.danger:hover, .btn-sm.danger:hover {
+    background-color: #8d0000;
+}
+
+.btn.secondary, .btn-sm.secondary {
+    background-color: #0066cc;
+}
+
+.btn.secondary:hover, .btn-sm.secondary:hover {
+    background-color: #004c99;
+}
+
+/* Warning */
+
+.btn.warning, .btn-sm.warning { 
+    background-color: #ff9900;
+    border: 1px solid #d18109;
+}
+
+.btn.warning:hover, .btn-sm.warning:hover {
+    background-color: #d18109;
+}
+
+/* Success */
+
+.btn.success, .btn-sm.success {
+    background-color: #0f8113;
+}
+
+.btn.success:hover, .btn-sm.success:hover {
+    background-color: #0c5e0f;
+}
+
+/* Blue */
+
+.btn.blue, .btn-sm.blue {
+    background-color: #0066cc;
+}
+
+.btn.blue:hover, .btn-sm.blue:hover {
+    background-color: #004c99;
+}
+
+/* Inputs */
+
+input[type="text"], input[type="password"], input[type="email"], textarea, select {
+    width: 100%;
+    padding: 0.25rem;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    font-size: 1rem;
+}
+
+input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus, textarea:focus, select:focus {
+    border-color: #b70000;
+    outline: none;
+}
+
+/* Step numbers (inline red circles with white numbers) */
+
+.step {
+    display: inline-block;
+    background-color: #000000;
+    color: white;
+    border-radius: 50%;
+    width: 1.5rem;
+    height: 1.5rem;
+    text-align: center;
+    line-height: 1.5rem;
+    font-weight: bold;
+    margin-right: 0.5rem;
+}
+
+.step.red {
+    color: white;
+    background-color: #b70000;
+}
+
+.step.blue {
+    color: white;
+    background-color: #0066cc;
+}
+
+/* Balance text */
+.balance {
+    font-weight: bold;
+}
+
+.balance.clean, .green {
+    color: green;
+}
+
+.balance.dirty, .red {
+    color: red;
+}
+
+/* Error text */
+
+.error-message {
+    color: rgb(182, 0, 0);
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+/* Container */
+
+.container {
+    width: 800px;
+    margin-top: 1rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 1rem;
+    background-color: #fff;
+    border: 1px solid #a7a7a7;
+}
+
+/* make the container fill the screen on smaller devices */
+@media (max-width: 900px) {
+    .container {
+        width: 100%;
+        margin: 0 auto;
+        border: none;
+        border-radius: 0;
+    }
+}
+
+/* Header and Toolbar */
+
+.toolbar {
+    background-color: black;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: -1rem -1rem 1rem -1rem;
+    padding: 0.25rem 1rem;
+    -webkit-user-drag: none;
+    user-select: none;
+}
+
+.toolbar .links a {
+    color: white;
+    text-decoration: none;
+    font-weight: bolder;
+}
+
+.toolbar .links a:hover {
+    text-decoration: underline;
+}
+
+.toolbar.linknav {
+    background-color: #a30808;
+    color: white;
+    border-bottom: 1px solid black;
+}
+
+.toolbar.linknav a {
+    color: white;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.toolbar.linknav a:hover {
+    text-decoration: none;
+    text-shadow: 0 0 5px black;
+}
+
+.header {
+    margin: -1rem -1rem 1rem -1rem;
+    border-bottom: #a7a7a7;
+}
+
+.header .banner {
+    width: 100%;
+    height: auto;
+    user-select: none;
+    -webkit-user-drag: none;
+    border-bottom: #a7a7a7 1px solid;
+}
+
+/* On smaller screens */
+
+/* make the toolbar stack vertically */
+@media (max-width: 600px) {
+    .toolbar {
+        flex-direction: column;
+    }
+
+    .toolbar .links {
+        margin-top: 0.5rem;
+    }
+
+    .toolbar.linknav a {
+        display: block;
+        margin: 0.25rem 0;
+    }
+}
+
+/* Footer */
+
+.footer {
+    margin: 1rem -1rem -1rem -1rem;
+    padding: 0.5rem 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #555;
+}

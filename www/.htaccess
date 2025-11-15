@@ -1,0 +1,35 @@
+RewriteEngine On
+RewriteBase /fakefolio/www/
+
+# Allow static files
+RewriteCond %{REQUEST_URI} ^/(css|_static|assets|js|images|fonts)(/|$)
+RewriteRule ^ - [L]
+
+# Skip existing files/folders
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# @username
+RewriteRule ^@([A-Za-z0-9_]+)/?$ pages/profile/index.php?u=$1 [L,QSA]
+
+# /@username/activity or /@username/friends or /@username/comments
+RewriteRule ^@([A-Za-z0-9_]+)/(activity|friends|comments)/?$ pages/profile/index.php?u=$1 [L,QSA]
+
+# /@username/edit
+RewriteRule ^@([A-Za-z0-9_]+)/edit/?$ pages/profile/edit.php?u=$1 [L,QSA]
+
+# root PHP
+RewriteRule ^(home|index|login|logout|register)/?$ $1.php [L,QSA]
+
+# /something -> /pages/something/index.php
+RewriteCond %{DOCUMENT_ROOT}/fakefolio/www/pages/$1/index.php -f
+RewriteRule ^(.+)$ pages/$1/index.php [L,QSA]
+
+# /something -> /pages/something/home.php
+RewriteCond %{DOCUMENT_ROOT}/fakefolio/www/pages/$1/home.php -f
+RewriteRule ^(.+)$ pages/$1/home.php [L,QSA]
+
+# /something/else -> /pages/something/else.php
+RewriteCond %{DOCUMENT_ROOT}/fakefolio/www/pages/$1.php -f
+RewriteRule ^(.+)$ pages/$1.php [L,QSA]
